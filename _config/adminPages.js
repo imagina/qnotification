@@ -12,7 +12,7 @@ export default {
     page: () => import('@imagina/qnotification/_pages/admin/setting/index'),
     title: 'notification.cms.sidebar.adminConfig.title',
     headerTitle: 'notification.cms.sidebar.adminConfig.headerTitle',
-    icon: 'fab fa-stack-exchange',
+    icon: 'fa-light fa-bell-plus',
     authenticated: true,
     subHeader: {
       refresh: true,
