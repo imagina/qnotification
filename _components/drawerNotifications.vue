@@ -184,7 +184,11 @@ export default {
           this.pagination.page = response.meta.page.currentPage
           this.loading = false
           resolve(response.data)
-        }).catch(error => this.loading = false)
+        }).catch(error => {
+          this.$apiResponse.handleError(error, () => {
+            this.loading = false
+          })
+        })
       })
     },
     //Notification Action

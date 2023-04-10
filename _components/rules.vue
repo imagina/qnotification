@@ -251,7 +251,11 @@
           this.$crud.index('apiRoutes.qnotification.rulesConfig', requestData).then(response => {
             this.events = response.data
             resolve(response.data)
-          }).catch(error => reject(error))
+          }).catch(error => {
+            this.$apiResponse.handleError(error, () => {
+              reject(error)
+            })
+          })
         })
       },
 
@@ -264,7 +268,11 @@
           this.$crud.index('apiRoutes.qnotification.providers', requestData).then(response => {
             this.providers = response.data
             resolve(response.data)
-          }).catch(error => reject(error))
+          }).catch(error => {
+            this.$apiResponse.handleError(error, () => {
+              reject(error)
+            })
+          })
         })
       },
 
