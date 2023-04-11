@@ -6,7 +6,7 @@
       <div id="contentProviders" class="col-12">
         <!--Page Actions-->
         <div class="box box-auto-height q-mb-md">
-          <page-actions :title="`${$tr($route.meta.headerTitle)} | ${$trp('notification.cms.label.provider')}`"/>
+          <page-actions :title="$trp('isite.cms.label.provider')"/>
         </div>
         <!--Component-->
         <providers/>
