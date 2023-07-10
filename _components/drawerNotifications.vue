@@ -56,6 +56,9 @@
 </template>
 
 <script>
+
+import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts';
+
 export default {
   beforeDestroy() {
     this.$eventBus.$off('inotification.notifications.new')
@@ -91,7 +94,10 @@ export default {
       //Default response
       let response = []
       let notifications = this.$clone(this.notifications)
-
+      if(true) {
+        notifications = storeFirebase.notificationList;
+      }
+      
       //Emit badge
       this.$eventBus.$emit('header.badge.manage', {notification: false})
 
@@ -139,7 +145,8 @@ export default {
   methods: {
     init() {
       this.listenEvents()
-      this.getData()
+      this.getData();
+      storeFirebase.getMessaging();
     },
     //Listen events
     listenEvents() {
