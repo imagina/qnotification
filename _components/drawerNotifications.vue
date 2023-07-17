@@ -70,6 +70,9 @@ export default {
       this.init()
     })
   },
+  beforeDestroy() {
+    storeFirebase.removeEvent();
+  },
   data() {
     return {
       loading: false,
@@ -144,8 +147,11 @@ export default {
   },
   methods: {
     init() {
+      storeFirebase.addEvent();
       this.listenEvents()
       this.getData();
+      storeFirebase.userId = this.$store.state.quserAuth.userId;
+      storeFirebase.sendDivice();
       storeFirebase.getMessaging();
     },
     //Listen events
