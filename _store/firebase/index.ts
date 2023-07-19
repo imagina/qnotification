@@ -2,6 +2,7 @@ import Vue, { reactive, computed } from 'vue';
 import { getMessaging, onMessage, MessagePayload } from "firebase/messaging";
 import baseService from '@imagina/qcrud/_services/baseService.js';
 import moment from 'moment';
+import {Notify} from 'quasar'
 
 const eventChannel = new BroadcastChannel('firebase-messaging-channel');
 interface Notification {
@@ -32,6 +33,7 @@ function notificationFirebase(payload) {
         body: payload.notification!.body,
         icon: '',
     };
+
     const notification = {
         id: notificationOptions.id || Vue.prototype.$uid(),
         message: `<b>${title}</b> ${notificationOptions.body}`,
@@ -41,13 +43,46 @@ function notificationFirebase(payload) {
         link: notificationOptions.link || false,
         isImportant: (notificationOptions.options && notificationOptions.options.isImportant)
             ? notificationOptions.options.isImportant : false,
-    }
+    };
+    Notify.create({
+        icon: 'fa-light fa-bell',
+        message: notification.message,
+        position: 'top-right',
+        html: true,
+        color: 'primary'
+    })
     state.notificationList.unshift(notification);
-    new Notification(title, notificationOptions);
+
+    // Comprobamos si el navegador admite las notificaciones
+    if ('Notification' in window) {
+        // Solicitamos el permiso para mostrar notificaciones
+        Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+                // Mostramos la notificación
+                const notification = new Notification(title, notificationOptions);
+            }
+        });
+    }
 }
 function onBackgroundMessage(event) {
     const payload = event.data;
     notificationFirebase(payload);
+}
+
+function detectDevice() {
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    if (/iphone|ipad|ipod/.test(userAgent)) {
+        return "iPhone";
+    } else if (/android/.test(userAgent)) {
+        return "Android";
+    } else if (/macintosh|mac os x/.test(userAgent)) {
+        return "Mac";
+    } else if (/windows/.test(userAgent)) {
+        return "Windows";
+    } else {
+        return "Unknown";
+    }
 }
 
 const store = computed(() => ({
@@ -85,7 +120,7 @@ const store = computed(() => ({
     sendDivice: () => {
         const payload = {
             userId: state.userId,
-            device: navigator.platform,
+            device: detectDevice(),
             token: state.token,
             provider: "firebase"
         }
