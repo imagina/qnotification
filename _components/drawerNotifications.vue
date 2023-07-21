@@ -74,10 +74,10 @@ export default {
     storeFirebase.removeEvent();
   },
   watch: {
-    notificationList: {
+    notificationFirebase: {
       deep: true,
       handler: function (newValue, oldValue) {
-        this.notifications.unshift(...newValue);
+        this.notifications.unshift(newValue);
       }
     },
   },
@@ -100,8 +100,8 @@ export default {
     }
   },
   computed: {
-    notificationList() {
-      return storeFirebase.notificationList
+    notificationFirebase() {
+      return storeFirebase.notification
     },
     //Items transformed
     notificationsData() {

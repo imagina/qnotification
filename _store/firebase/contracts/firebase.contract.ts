@@ -13,13 +13,13 @@ export interface NotificationContract {
 }
 
 export interface StateContract {
-    notificationList: NotificationContract[];
+    notification: NotificationContract;
     token: string;
     userId: number;
 }
 
 export interface StoreContract {
-    notificationList: NotificationContract[];
+    notification: NotificationContract;
     token: string;
     userId: number;
     getMessaging: () => void;

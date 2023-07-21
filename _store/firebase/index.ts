@@ -24,7 +24,15 @@ const eventChannel = new BroadcastChannel('firebase-messaging-channel');
  * @type {StateContract}
  */
 const state = reactive<StateContract>({
-    notificationList: [],
+    notification: {
+        id: 0,
+        message: '',
+        icon: null,
+        createdAt: null,
+        isRead: null,
+        link: null,
+        isImportant: null
+    },
     token: '',
     userId: 0,
 });
@@ -36,17 +44,17 @@ const state = reactive<StateContract>({
 const store: StoreContract = computed(() => ({
     /**
      * Gets the notification list.
-     * @type {NotificationContract[]}
+     * @type {NotificationContract}
      */
-    get notificationList(): NotificationContract[] {
-        return state.notificationList;
+    get notification(): NotificationContract {
+        return state.notification;
     },
     /**
      * Sets the notification list.
      * @type {NotificationContract[]}
      */
-    set notificationList(value: NotificationContract[]) {
-        state.notificationList = value;
+    set notification(value: NotificationContract) {
+        state.notification = value;
     },
     /**
      * Gets the Firebase Cloud Messaging (FCM) token.

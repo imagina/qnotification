@@ -29,7 +29,7 @@ export function notificationFirebase(payload: MessagePayload): void {
             ? notificationOptions.options.isImportant : false,
     };
 
-    store.notificationList.unshift(notification);
+    store.notification = notification;
 
     if ('Notification' in window) {
         Notification.requestPermission().then((permission) => {
