@@ -73,6 +73,14 @@ export default {
   beforeDestroy() {
     storeFirebase.removeEvent();
   },
+  watch: {
+    notificationList: {
+      deep: true,
+      handler: function (newValue, oldValue) {
+        this.notifications.unshift(...newValue);
+      }
+    },
+  },
   data() {
     return {
       loading: false,
@@ -92,14 +100,14 @@ export default {
     }
   },
   computed: {
+    notificationList() {
+      return storeFirebase.notificationList
+    },
     //Items transformed
     notificationsData() {
       //Default response
       let response = []
       let notifications = this.$clone(this.notifications)
-      if(true) {
-        notifications = storeFirebase.notificationList;
-      }
       
       //Emit badge
       this.$eventBus.$emit('header.badge.manage', {notification: false})

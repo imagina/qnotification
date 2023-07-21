@@ -1,4 +1,3 @@
-import { Notify } from 'quasar';
 import moment from 'moment';
 import Vue, { computed, ComputedRef } from 'vue';
 import store from '@imagina/qnotification/_store/firebase';
@@ -29,14 +28,6 @@ export function notificationFirebase(payload: MessagePayload): void {
         isImportant: (notificationOptions.options && notificationOptions.options.isImportant)
             ? notificationOptions.options.isImportant : false,
     };
-
-    Notify.create({
-        icon: 'fa-light fa-bell',
-        message: notification.message,
-        position: 'top-right',
-        html: true,
-        color: 'primary'
-    });
 
     store.notificationList.unshift(notification);
 
