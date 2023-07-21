@@ -53,14 +53,19 @@ function notificationFirebase(payload) {
     })
     state.notificationList.unshift(notification);
 
-    // Comprobamos si el navegador admite las notificaciones
     if ('Notification' in window) {
-        // Solicitamos el permiso para mostrar notificaciones
         Notification.requestPermission().then((permission) => {
-            if (permission === 'granted') {
-                // Mostramos la notificación
-                const notification = new Notification(title, notificationOptions);
-            }
+          if (permission === 'granted') {
+            const options = {
+              body: notificationOptions.body,
+              icon: notificationOptions.icon,
+            };
+            navigator.serviceWorker.ready.then(registration => {
+              if(registration) {
+                registration.showNotification(title, options);
+              }
+            });
+          }
         });
     }
 }
