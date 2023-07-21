@@ -1,135 +1,121 @@
 import Vue, { reactive, computed } from 'vue';
 import { getMessaging, onMessage, MessagePayload } from "firebase/messaging";
 import baseService from '@imagina/qcrud/_services/baseService.js';
-import moment from 'moment';
-import {Notify} from 'quasar'
+import {
+    checkPushNotifications,
+    notificationFirebase,
+    onBackgroundMessage,
+    detectDevice,
+} from '@imagina/qnotification/_store/firebase/plugins/notificationUtils';
+import {
+    StateContract,
+    StoreContract,
+    NotificationContract
+} from './contracts/firebase.contract';
 
+/**
+ * Broadcast channel for handling Firebase messaging events.
+ * @type {BroadcastChannel}
+ */
 const eventChannel = new BroadcastChannel('firebase-messaging-channel');
-interface Notification {
-    id: any;
-    message: string;
-    icon: any;
-    createdAt: any;
-    isRead: any;
-    link: any;
-    isImportant: any;
-}
 
-interface State {
-    notificationList: Notification[];
-    token: String | null;
-    userId: number | null;
-}
-
-const state = reactive<State>({
+/**
+ * State object containing the reactive state properties.
+ * @type {StateContract}
+ */
+const state = reactive<StateContract>({
     notificationList: [],
-    token: null,
-    userId: null,
+    token: '',
+    userId: 0,
 });
 
-function notificationFirebase(payload) {
-    const title = payload.notification!.title!;
-    const notificationOptions: any = {
-        body: payload.notification!.body,
-        icon: '',
-    };
-
-    const notification = {
-        id: notificationOptions.id || Vue.prototype.$uid(),
-        message: `<b>${title}</b> ${notificationOptions.body}`,
-        icon: notificationOptions.icon || 'fas fa-bell',
-        createdAt: notificationOptions.createdAt || moment(),
-        isRead: notificationOptions.isRead || false,
-        link: notificationOptions.link || false,
-        isImportant: (notificationOptions.options && notificationOptions.options.isImportant)
-            ? notificationOptions.options.isImportant : false,
-    };
-    Notify.create({
-        icon: 'fa-light fa-bell',
-        message: notification.message,
-        position: 'top-right',
-        html: true,
-        color: 'primary'
-    })
-    state.notificationList.unshift(notification);
-
-    if ('Notification' in window) {
-        Notification.requestPermission().then((permission) => {
-          if (permission === 'granted') {
-            const options = {
-              body: notificationOptions.body,
-              icon: notificationOptions.icon,
-            };
-            navigator.serviceWorker.ready.then(registration => {
-              if(registration) {
-                registration.showNotification(title, options);
-              }
-            });
-          }
-        });
-    }
-}
-function onBackgroundMessage(event) {
-    const payload = event.data;
-    notificationFirebase(payload);
-}
-
-function detectDevice() {
-    const userAgent = navigator.userAgent.toLowerCase();
-
-    if (/iphone|ipad|ipod/.test(userAgent)) {
-        return "iPhone";
-    } else if (/android/.test(userAgent)) {
-        return "Android";
-    } else if (/macintosh|mac os x/.test(userAgent)) {
-        return "Mac";
-    } else if (/windows/.test(userAgent)) {
-        return "Windows";
-    } else {
-        return "Unknown";
-    }
-}
-
-const store = computed(() => ({
-    get notificationList() {
+/**
+ * Store object containing the computed properties and actions related to Firebase messaging.
+ * @type {StoreContract}
+ */
+const store: StoreContract = computed(() => ({
+    /**
+     * Gets the notification list.
+     * @type {NotificationContract[]}
+     */
+    get notificationList(): NotificationContract[] {
         return state.notificationList;
     },
-    set notificationList(value) {
+    /**
+     * Sets the notification list.
+     * @type {NotificationContract[]}
+     */
+    set notificationList(value: NotificationContract[]) {
         state.notificationList = value;
     },
-    get token() {
+    /**
+     * Gets the Firebase Cloud Messaging (FCM) token.
+     * @type {string}
+     */
+    get token(): string {
         return state.token;
     },
-    set token(value) {
+    /**
+     * Sets the Firebase Cloud Messaging (FCM) token.
+     * @type {string}
+     */
+    set token(value: string) {
         state.token = value;
     },
-    get userId() {
+    /**
+     * Gets the user ID.
+     * @type {number}
+     */
+    get userId(): number {
         return state.userId;
     },
-    set userId(value) {
+    /**
+     * Sets the user ID.
+     * @type {number}
+     */
+    set userId(value: number) {
         state.userId = value;
     },
-    getMessaging: () => {
+    /**
+     * Initializes Firebase Cloud Messaging (FCM) messaging.
+     */
+    getMessaging: (): void => {
+        if (!checkPushNotifications) {
+            console.log('Notifications are blocked.');
+            return;
+        }
         const messaging = getMessaging();
         onMessage(messaging, (payload: MessagePayload) => {
             notificationFirebase(payload);
         });
     },
+    /**
+     * Function to handle background messages.
+     */
     onBackgroundMessage,
-    removeEvent() {
+    /**
+     * Removes the event listener for background messages.
+     */
+    removeEvent(): void {
         eventChannel.removeEventListener('message', onBackgroundMessage);
     },
-    addEvent() {
+    /**
+     * Adds the event listener for background messages.
+     */
+    addEvent(): void {
         eventChannel.addEventListener('message', onBackgroundMessage);
     },
-    sendDivice: () => {
+    /**
+     * Sends the device information to the server.
+     */
+    sendDivice: (): void => {
         const payload = {
             userId: state.userId,
             device: detectDevice(),
             token: state.token,
             provider: "firebase"
         }
-        baseService.create('apiRoutes.qnotification.devices', payload)
+        baseService.create('apiRoutes.qnotification.devices', payload);
     }
 })).value;
 
