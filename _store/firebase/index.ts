@@ -35,6 +35,7 @@ const state = reactive<StateContract>({
     },
     token: '',
     userId: 0,
+    icon: '',
 });
 
 /**
@@ -83,6 +84,20 @@ const store: StoreContract = computed(() => ({
      */
     set userId(value: number) {
         state.userId = value;
+    },
+    /**
+     * Gets the icon.
+     * @type {string}
+     */
+    get icon(): string {
+        return state.icon;
+    },
+    /**
+     * Sets the icon.
+     * @type {string}
+     */
+    set icon(value: string) {
+        state.icon = value;
     },
     /**
      * Initializes Firebase Cloud Messaging (FCM) messaging.

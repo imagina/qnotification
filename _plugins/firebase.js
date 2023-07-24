@@ -13,12 +13,12 @@ export const firebaseConfig = {
   measurementId: "G-F7FC44SSCV"
 };
 
+const app = initializeApp(firebaseConfig);
+
 export function getTokenFirebase() {
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
       console.log("Notification permission granted.");
-      const app = initializeApp(firebaseConfig);
-
       const messaging = getMessaging(app);
       getToken(messaging, {
         vapidKey:

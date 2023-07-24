@@ -15,7 +15,7 @@ export function notificationFirebase(payload: MessagePayload): void {
     const title = payload.notification!.title!;
     const notificationOptions: any = {
         body: payload.notification!.body,
-        icon: '',
+        icon: store.icon,
     };
 
     const notification = {

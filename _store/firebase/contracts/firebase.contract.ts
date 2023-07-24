@@ -16,12 +16,14 @@ export interface StateContract {
     notification: NotificationContract;
     token: string;
     userId: number;
+    icon: string;
 }
 
 export interface StoreContract {
     notification: NotificationContract;
     token: string;
     userId: number;
+    icon: string;
     getMessaging: () => void;
     onBackgroundMessage: (event:  MessagePayload) => void;
     removeEvent(): void;
