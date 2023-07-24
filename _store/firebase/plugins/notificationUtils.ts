@@ -15,7 +15,7 @@ export function notificationFirebase(payload: MessagePayload): void {
     const title = payload.notification!.title!;
     const notificationOptions: any = {
         body: payload.notification!.body,
-        icon: store.icon,
+        icon: payload.notification!.icon,
     };
 
     const notification = {
@@ -36,7 +36,7 @@ export function notificationFirebase(payload: MessagePayload): void {
             if (permission === 'granted') {
                 const options = {
                     body: notificationOptions.body,
-                    icon: notificationOptions.icon,
+                    icon: store.icon,
                 };
                 navigator.serviceWorker.ready.then(registration => {
                     if (registration) {
