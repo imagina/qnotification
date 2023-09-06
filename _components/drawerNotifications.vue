@@ -158,8 +158,6 @@ export default {
       storeFirebase.addEvent();
       this.listenEvents()
       this.getData();
-      storeFirebase.userId = this.$store.state.quserAuth.userId;
-      storeFirebase.sendDivice();
       storeFirebase.getMessaging();
     },
     //Listen events

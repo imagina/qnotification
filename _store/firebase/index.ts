@@ -132,6 +132,7 @@ const store: StoreContract = computed(() => ({
      * Sends the device information to the server.
      */
     sendDivice: (): void => {
+        if(state.token.length === 0) return;
         const payload = {
             userId: state.userId,
             device: detectDevice(),

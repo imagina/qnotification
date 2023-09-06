@@ -15,25 +15,38 @@ export const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export function getTokenFirebase() {
-  Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      console.log("Notification permission granted.");
-      const messaging = getMessaging(app);
-      getToken(messaging, {
-        vapidKey:
-          "BF3U4fgT2TJgtkCVWsCYN2RCYcY2X_PsxqiLlE9sHPPPvzAWr0XWmRfJcJh12fizpzTtakHZkJEAkbZx-m-zaFM",
-      }).then((currentToken) => {
-        if (currentToken) {
-          console.log("currentToken: ", currentToken);
-          storeFirebase.token = currentToken;
-        } else {
-          console.log("Can not get token");
-        }
-      });
-    } else {
-      console.log("Do not have permission!");
-    }
+function requestPermission() {
+  return new Promise((resolve) => {
+    const permissionHandler = (permission) => {
+      if (permission === "granted") {
+        resolve(true);
+      } else if (permission === "denied") {
+        resolve(false);
+      }
+    };
+
+    Notification.requestPermission().then(permissionHandler);
   });
+}
+
+export async function getTokenFirebase(userId) {
+  let permissionGranted = false;
+
+  permissionGranted = await requestPermission();
+
+  if (permissionGranted) {
+    const messaging = getMessaging(app);
+    getToken(messaging, {
+      vapidKey: "BF3U4fgT2TJgtkCVWsCYN2RCYcY2X_PsxqiLlE9sHPPPvzAWr0XWmRfJcJh12fizpzTtakHZkJEAkbZx-m-zaFM",
+    }).then((currentToken) => {
+      if (currentToken &&  storeFirebase.token !== currentToken) {
+        storeFirebase.userId = userId;
+        storeFirebase.token = currentToken;
+        storeFirebase.sendDivice();
+      }
+    });
+  } else {
+    window.alert("Please activate notification permissions in your browser settings.");
+  }
 }
 
