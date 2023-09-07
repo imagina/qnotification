@@ -2,19 +2,20 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
 import axios from 'axios';
 import moment from 'moment'
-
+import CryptoJS from 'crypto-js';
 
 import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts'
 
 export async function getTokenFirebase(userId) {
-  //const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${moment().format('Y-m-d')}firebase`).toString();
-  axios.get(`https://staging-siembra-coffe.ozonohosting.com/api/notification/v1/providers/firebase?filter={%22field%22:%20%22system_name%22}&token=d1e4e0153a8985b8957056d251ab7713`)
+  const currentDate = moment().format('YYYY-MM-DD');
+  const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${currentDate}firebase`).toString();
+  axios.get(`https://staging-siembra-coffe.ozonohosting.com/api/notification/v1/providers/firebase?filter={%22field%22:%20%22system_name%22}&token=${md5Hash}`)
     .then(response => {
       const json = response.data;
       if (json.errors === 'Unauthorized') {
         return
       };
-      firebaseConfig = {
+      const firebaseConfig = {
         apiKey: json.data.fields.firebaseApiKey,
         authDomain: json.data.fields.firebaseAuthDomain,
         projectId: json.data.fields.firebaseProjectId,
