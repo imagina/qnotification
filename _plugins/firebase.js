@@ -1,52 +1,58 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
+import axios from 'axios';
+import moment from 'moment'
+
 
 import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts'
 
-export const firebaseConfig = {
-  apiKey: "AIzaSyBKed8DEWi0Gk1-40_eas3Byr8Ln_WjEeQ",
-  authDomain: "notifications-edc9c.firebaseapp.com",
-  projectId: "notifications-edc9c",
-  storageBucket: "notifications-edc9c.appspot.com",
-  messagingSenderId: "626515463422",
-  appId: "1:626515463422:web:5d74016b36dcbe4b6629af",
-  measurementId: "G-F7FC44SSCV"
-};
-
-const app = initializeApp(firebaseConfig);
-
-function requestPermission() {
-  return new Promise((resolve) => {
-    const permissionHandler = (permission) => {
-      if (permission === "granted") {
-        resolve(true);
-      } else if (permission === "denied") {
-        resolve(false);
+export async function getTokenFirebase(userId) {
+  //const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${moment().format('Y-m-d')}firebase`).toString();
+  axios.get(`https://staging-siembra-coffe.ozonohosting.com/api/notification/v1/providers/firebase?filter={%22field%22:%20%22system_name%22}&token=d1e4e0153a8985b8957056d251ab7713`)
+    .then(response => {
+      const json = response.data;
+      if (json.errors === 'Unauthorized') {
+        return
+      };
+      firebaseConfig = {
+        apiKey: json.data.fields.firebaseApiKey,
+        authDomain: json.data.fields.firebaseAuthDomain,
+        projectId: json.data.fields.firebaseProjectId,
+        storageBucket: json.data.fields.firebaseStorageBucket,
+        messagingSenderId: json.data.fields.firebaseMessagingSenderId,
+        appId: json.data.fields.firebaseAppId,
+        measurementId: json.data.fields.firebaseMeasurementId
       }
-    };
 
-    Notification.requestPermission().then(permissionHandler);
-  });
+      const app = initializeApp(firebaseConfig);
+      notificationToken(app, json.data.fields.firebaseWebPushCertificateKeyPair, userId);
+    });
 }
 
-export async function getTokenFirebase(userId) {
-  let permissionGranted = false;
 
-  permissionGranted = await requestPermission();
-
-  if (permissionGranted) {
-    const messaging = getMessaging(app);
-    getToken(messaging, {
-      vapidKey: "BF3U4fgT2TJgtkCVWsCYN2RCYcY2X_PsxqiLlE9sHPPPvzAWr0XWmRfJcJh12fizpzTtakHZkJEAkbZx-m-zaFM",
-    }).then((currentToken) => {
-      if (currentToken &&  storeFirebase.token !== currentToken) {
-        storeFirebase.userId = userId;
-        storeFirebase.token = currentToken;
-        storeFirebase.sendDivice();
-      }
-    });
-  } else {
-    window.alert("Please activate notification permissions in your browser settings.");
-  }
+function notificationToken(app, firebaseWebPushCertificateKeyPair, userId) {
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      console.log("Notification permission granted.");
+      const messaging = getMessaging(app);
+      getToken(messaging, {
+        vapidKey: firebaseWebPushCertificateKeyPair,
+      }).then((currentToken) => {
+        if (currentToken) {
+          if (currentToken &&  storeFirebase.token !== currentToken) {
+            console.log("currentToken: ", currentToken);
+            storeFirebase.userId = userId;
+            storeFirebase.token = currentToken;
+            storeFirebase.sendDivice();
+            storeFirebase.getMessaging();
+          }
+        } else {
+          console.log("Can not get token");
+        }
+      });
+    } else {
+      console.log("Do not have permission!");
+    }
+  });
 }
 

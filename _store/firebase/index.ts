@@ -103,7 +103,7 @@ const store: StoreContract = computed(() => ({
      * Initializes Firebase Cloud Messaging (FCM) messaging.
      */
     getMessaging: (): void => {
-        if (!checkPushNotifications) {
+        if (!checkPushNotifications.value) {
             console.log('Notifications are blocked.');
             return;
         }

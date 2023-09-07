@@ -158,7 +158,7 @@ export default {
       storeFirebase.addEvent();
       this.listenEvents()
       this.getData();
-      storeFirebase.getMessaging();
+      storeFirebase.icon = this.$store.state.qsiteApp.logo;
     },
     //Listen events
     listenEvents() {
