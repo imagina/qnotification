@@ -7,6 +7,12 @@ import CryptoJS from 'crypto-js';
 import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts'
 
 export async function getTokenFirebase(userId) {
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    if(registrations.length === 0) {
+      return;
+    }
+  }
   const currentDate = moment().format('YYYY-MM-DD');
   const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${currentDate}firebase`).toString();
   axios.get(`https://staging-siembra-coffe.ozonohosting.com/api/notification/v1/providers/firebase?filter={%22field%22:%20%22system_name%22}&token=${md5Hash}`)
