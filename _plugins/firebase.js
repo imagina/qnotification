@@ -10,9 +10,7 @@ export async function getTokenFirebase(userId) {
   if(storeFirebase.token.length > 0) return;
   if ('serviceWorker' in navigator) {
     const registrations = await navigator.serviceWorker.getRegistrations();
-    if(registrations.length === 0) {
-      return;
-    }
+    if(registrations.length === 0) return;
   }
   const currentDate = moment().format('YYYY-MM-DD');
   const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${currentDate}firebase`).toString();
@@ -31,7 +29,6 @@ export async function getTokenFirebase(userId) {
         appId: json.data.fields.firebaseAppId,
         measurementId: json.data.fields.firebaseMeasurementId
       }
-
       const app = initializeApp(firebaseConfig);
       notificationToken(app, json.data.fields.firebaseWebPushCertificateKeyPair, userId);
     });
