@@ -7,6 +7,7 @@ import CryptoJS from 'crypto-js';
 import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts'
 
 export async function getTokenFirebase(userId) {
+  if(storeFirebase.token.length > 0) return;
   if ('serviceWorker' in navigator) {
     const registrations = await navigator.serviceWorker.getRegistrations();
     if(registrations.length === 0) {
