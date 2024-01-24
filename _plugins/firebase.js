@@ -31,6 +31,8 @@ export async function getTokenFirebase(userId) {
       }
       const app = initializeApp(firebaseConfig);
       notificationToken(app, json.data.fields.firebaseWebPushCertificateKeyPair, userId);
+    }).catch(error => {
+      console.log(error);
     });
 }
 
