@@ -207,7 +207,7 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
+<style lang="sass">
 #drawerNotificationsComponent
   padding 16px 0 16px 16px
   height 100%

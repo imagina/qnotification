@@ -306,7 +306,7 @@
     }
   }
 </script>
-<style lang="stylus">
+<style lang="sass">
   #modalFormRulesConfig
     .q-card
       max-height calc(100vh - 48px) !important
