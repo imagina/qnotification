@@ -207,31 +207,36 @@ export default {
   }
 }
 </script>
-<style lang="sass">
-#drawerNotificationsComponent
-  padding 16px 0 16px 16px
-  height 100%
+<style lang="scss">
+#drawerNotificationsComponent {
+  padding: 16px 0 16px 16px;
+  height: 100%;
 
-  .item
-    font-size 13px
-    border-radius 5px
-    padding 8px 8px 8px 0
-    margin-right 8px
+  .item {
+    font-size: 13px;
+    border-radius: 5px;
+    padding: 8px 8px 8px 0;
+    margin-right: 8px;
 
-    &:hover
-      background-color #f7f6f6
+    &:hover {
+      background-color: #f7f6f6;
+    }
 
-    .text-item
-      min-height 60px
-      line-height 1.2
-      max-width 190px
+    .text-item {
+      min-height: 60px;
+      line-height: 1.2;
+      max-width: 190px;
+    }
 
-    .icon-item
-      font-size 23px
-      width 50px
-      height 50px
-      background-color #EEEEEE
-      position absolute
-      left 0
-      border-radius 50%
+    .icon-item {
+      font-size: 23px;
+      width: 50px;
+      height: 50px;
+      background-color: #EEEEEE;
+      position: absolute;
+      left: 0;
+      border-radius: 50%;
+    }
+  }
+}
 </style>
