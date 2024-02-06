@@ -9,7 +9,7 @@
       </div>
       <!-- Close icon -->
       <q-icon name="fas fa-times" color="blue-grey" size="20px" class="cursor-pointer"
-              @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"/>
+              @click="eventBus.emit('toggleMasterDrawer', 'notification')"/>
     </div>
     <!--Separator-->
     <q-separator class="q-my-md"/>
@@ -56,9 +56,10 @@
 </template>
 
 <script>
+import eventBus from '@imagina/qsite/_plugins/eventBus'
 export default {
   beforeDestroy() {
-    this.$eventBus.$off('inotification.notifications.new')
+    eventBus.off('inotification.notifications.new')
   },
   props: {},
   components: {},
@@ -83,6 +84,7 @@ export default {
         perPage: 15,
         lastPage: -1
       },
+      eventBus
     }
   },
   computed: {
@@ -93,7 +95,7 @@ export default {
       let notifications = this.$clone(this.notifications)
 
       //Emit badge
-      this.$eventBus.$emit('header.badge.manage', {notification: false})
+      eventBus.emit('header.badge.manage', {notification: false})
 
       //Parse notifications
       if (notifications && notifications.length) {
@@ -125,7 +127,7 @@ export default {
 
           //Show badge header button
           if (!notification.isRead)
-            this.$eventBus.$emit('header.badge.manage', {notification: true})
+            eventBus.emit('header.badge.manage', {notification: true})
 
           //Add notification data to response
           response.push(notification)
@@ -143,7 +145,7 @@ export default {
     },
     //Listen events
     listenEvents() {
-      this.$eventBus.$on('inotification.notifications.new', response => {
+      eventBus.on('inotification.notifications.new', response => {
         //Add notification
         this.notifications.unshift(response)
         //Show alert notification
@@ -153,7 +155,7 @@ export default {
           actions: [{
             label: this.$tr('isite.cms.label.show'),
             color: 'white',
-            handler: () => this.$eventBus.$emit('openMasterDrawer', 'notification')
+            handler: () => eventBus.emit('openMasterDrawer', 'notification')
           }],
         })
         //Play sound
