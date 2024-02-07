@@ -164,7 +164,7 @@ export default {
     },
     //Get notifications
     getData() {
-      return new ((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         this.loading = true
 
         //Request Params
