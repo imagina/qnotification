@@ -31,9 +31,9 @@
             <div class="text-item row items-center">
               <!--Message-->
               <div class="ellipsis-3-lines q-pr-xs text-grey-8">
-                <div v-html="notification.message"></div>
+                <div v-html="notification.message" ></div>
                 <q-tooltip :delay="1000" max-width="250px">
-                  <label v-html="notification.message"></label>
+                  <label v-html="notification.message" ></label>
                 </q-tooltip>
               </div>
               <!--Date-->
