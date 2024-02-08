@@ -74,9 +74,11 @@
   </div>
 </template>
 <script>
+import eventBus from '@imagina/qsite/_plugins/eventBus'
+
 export default {
   beforeDestroy() {
-    this.$root.$off('page.data.refresh')
+    eventBus.off('page.data.refresh')
   },
   props: {},
   components: {},
@@ -127,7 +129,7 @@ export default {
       //Get providers
       this.getProviders()
       //Listen refresh page
-      this.$root.$on('page.data.refresh', () => this.getProviders(true))
+      eventBus.on('page.data.refresh', () => this.getProviders(true))
     },
 
     //Get providers
