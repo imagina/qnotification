@@ -115,6 +115,8 @@
   </div>
 </template>
 <script>
+import eventBus from '@imagina/qsite/_plugins/eventBus'
+
   export default {
     props: {},
     components: {},
@@ -230,7 +232,7 @@
       init() {
         this.form = this.$clone(this.defaultDataForm)//Set default data form
         this.getData()//Get data
-        this.$root.$on('page.data.refresh', () => this.getData(true))//Listen refresh page
+        eventBus.on('page.data.refresh', () => this.getData(true))//Listen refresh page
       },
 
       //Get data
