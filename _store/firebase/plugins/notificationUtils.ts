@@ -1,6 +1,6 @@
 import moment from 'moment';
 import Vue, { computed, ComputedRef } from 'vue';
-import store from '@imagina/qnotification/_store/firebase';
+import store from 'modules/qnotification/_store/firebase';
 import { MessagePayload } from "firebase/messaging";
 
 /**

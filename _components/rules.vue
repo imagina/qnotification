@@ -3,7 +3,7 @@
     <!--Content-->
     <div id="contentRulesConfig">
       <!--List rules-->
-      <crud :crud-data="import('@imagina/qnotification/_crud/rules')" @create="openForm()" @update="openForm"/>
+      <crud :crud-data="import('modules/qnotification/_crud/rules')" @create="openForm()" @update="openForm"/>
     </div>
 
     <!--Dialog Form Rules notification-->
@@ -115,7 +115,7 @@
   </div>
 </template>
 <script>
-import eventBus from '@imagina/qsite/_plugins/eventBus'
+import eventBus from 'modules/qsite/_plugins/eventBus'
 
   export default {
     props: {},

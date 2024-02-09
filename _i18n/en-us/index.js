@@ -1,5 +1,5 @@
-import layout from '@imagina/qnotification/_i18n/en-us/layout'
-import sidebar from '@imagina/qnotification/_i18n/en-us/sidebar'
+import layout from 'modules/qnotification/_i18n/en-us/layout'
+import sidebar from 'modules/qnotification/_i18n/en-us/sidebar'
 
 export default {
   layout,
