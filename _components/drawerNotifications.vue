@@ -60,7 +60,6 @@ import eventBus from 'modules/qsite/_plugins/eventBus'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
-
 export default {
   beforeDestroy() {
     eventBus.off('inotification.notifications.new')
