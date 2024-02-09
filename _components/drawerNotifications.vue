@@ -56,17 +56,11 @@
 </template>
 
 <script>
-<<<<<<< HEAD
 import eventBus from 'modules/qsite/_plugins/eventBus'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
-=======
-
-import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts';
-
 import eventBus from '@imagina/qsite/_plugins/eventBus'
->>>>>>> 37752b29ecf52f541e6bfe81c3ee28d976593bc6
 export default {
   beforeDestroy() {
     eventBus.off('inotification.notifications.new')
