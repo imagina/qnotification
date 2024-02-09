@@ -1,5 +1,5 @@
 import moment from 'moment';
-import Vue, { computed, ComputedRef } from 'vue';
+import { computed, ComputedRef, getCurrentInstance } from 'vue';
 import store from '@imagina/qnotification/_store/firebase';
 import { MessagePayload } from "firebase/messaging";
 
@@ -12,6 +12,7 @@ import { MessagePayload } from "firebase/messaging";
  * @param {string} payload.notification.body - Body of the notification.
  */
 export function notificationFirebase(payload: MessagePayload): void {
+  const proxy = getCurrentInstance().appContext.config.globalProperties
     const title = payload.notification!.title!;
     const notificationOptions: any = {
         body: payload.notification!.body,
@@ -19,7 +20,7 @@ export function notificationFirebase(payload: MessagePayload): void {
     };
 
     const notification = {
-        id: notificationOptions.id || Vue.prototype.$uid(),
+        id: notificationOptions.id || proxy.$uid(),
         message: `<b>${title}</b> ${notificationOptions.body}`,
         icon: notificationOptions.icon || 'fas fa-bell',
         createdAt: notificationOptions.createdAt || moment(),
