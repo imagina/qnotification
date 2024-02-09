@@ -9,5 +9,6 @@ export default {
   markRead : `${urlBase}/notifications/mark-read`,
   providers : `${urlBase}/providers`,
   rules : `${urlBase}/rules`,
-  rulesConfig : `${urlBase}/rules/config`
+  rulesConfig : `${urlBase}/rules/config`,
+  devices: `${urlBase}/devices`
 }
