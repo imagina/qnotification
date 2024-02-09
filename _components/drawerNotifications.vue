@@ -56,10 +56,14 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import eventBus from 'modules/qsite/_plugins/eventBus'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
+=======
+import eventBus from '@imagina/qsite/_plugins/eventBus'
+>>>>>>> parent of 37752b2 (Merge pull request #8 from imagina/quasarv2_offline)
 export default {
   beforeDestroy() {
     eventBus.off('inotification.notifications.new')
@@ -70,17 +74,6 @@ export default {
     this.$nextTick(function () {
       this.init()
     })
-  },
-  beforeDestroy() {
-    storeFirebase.removeEvent();
-  },
-  watch: {
-    notificationFirebase: {
-      deep: true,
-      handler: function (newValue, oldValue) {
-        this.notifications.unshift(newValue);
-      }
-    },
   },
   data() {
     return {
@@ -102,15 +95,12 @@ export default {
     }
   },
   computed: {
-    notificationFirebase() {
-      return storeFirebase.notification
-    },
     //Items transformed
     notificationsData() {
       //Default response
       let response = []
       let notifications = this.$clone(this.notifications)
-      
+
       //Emit badge
       eventBus.emit('header.badge.manage', {notification: false})
 
@@ -157,10 +147,8 @@ export default {
   },
   methods: {
     init() {
-      storeFirebase.addEvent();
       this.listenEvents()
-      this.getData();
-      storeFirebase.icon = this.$store.state.qsiteApp.logo;
+      this.getData()
     },
     //Listen events
     listenEvents() {
