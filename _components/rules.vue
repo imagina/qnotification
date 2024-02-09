@@ -115,6 +115,8 @@
   </div>
 </template>
 <script>
+import eventBus from '@imagina/qsite/_plugins/eventBus'
+
   export default {
     props: {},
     components: {},
@@ -230,7 +232,7 @@
       init() {
         this.form = this.$clone(this.defaultDataForm)//Set default data form
         this.getData()//Get data
-        this.$root.$on('page.data.refresh', () => this.getData(true))//Listen refresh page
+        eventBus.on('page.data.refresh', () => this.getData(true))//Listen refresh page
       },
 
       //Get data
@@ -306,49 +308,64 @@
     }
   }
 </script>
-<style lang="stylus">
-  #modalFormRulesConfig
-    .q-card
-      max-height calc(100vh - 48px) !important
-      max-width 850px
+<style lang="scss">
+  #modalFormRulesConfig {
+    .q-card {
+      max-height: calc(100vh - 48px) !important;
+      max-width: 850px;
 
-      .q-card__section
-        min-height 250px
-        max-height calc(100vh - 176px) !important
-        overflow-y scroll
+      .q-card__section {
+        min-height: 250px;
+        max-height: calc(100vh - 176px) !important;
+        overflow-y: scroll;
+      }
+    }
 
-    .q-modal-content
-      max-height 70vh !important
-      @media screen and (max-width: $breakpoint-sm)
-        max-height 100vh !important
+    .q-modal-content {
+      max-height: 70vh !important;
 
-      .q-modal-layout
-        .q-layout-header
-          position: absolute !important
-          top 0
-          width 100%
+      @media screen and (max-width: $breakpoint-sm) {
+        max-height: 100vh !important;
+      }
 
-        .q-layout-footer
-          position: absolute !important
-          width 100%
-          bottom 0
+      .q-modal-layout {
+        .q-layout-header {
+          position: absolute !important;
+          top: 0;
+          width: 100%;
+        }
 
-        .q-modal-layout-content
-          max-height 70vh !important
-          padding 50px 0
-          @media screen and (max-width: $breakpoint-sm)
-            min-height 100vh !important
+        .q-layout-footer {
+          position: absolute !important;
+          width: 100%;
+          bottom: 0;
+        }
 
-    #eventsContent
-      border 1px solid $grey-4
-      border-radius 5px
-      padding 5px
+        .q-modal-layout-content {
+          max-height: 70vh !important;
+          padding: 50px 0;
 
-      .q-item
-        min-height 30px
-        height 32px
-        padding 0px
+          @media screen and (max-width: $breakpoint-sm) {
+            min-height: 100vh !important;
+          }
+        }
+      }
+    }
 
-      .q-checkbox
-        min-height 32px
+    #eventsContent {
+      border: 1px solid $grey-4;
+      border-radius: 5px;
+      padding: 5px;
+
+      .q-item {
+        min-height: 30px;
+        height: 32px;
+        padding: 0px;
+      }
+
+      .q-checkbox {
+        min-height: 32px;
+      }
+    }
+  }
 </style>
