@@ -1,12 +1,12 @@
 import Vue, { reactive, computed } from 'vue';
 import { getMessaging, onMessage, MessagePayload } from "firebase/messaging";
-import baseService from '@imagina/qcrud/_services/baseService.js';
+import baseService from 'modules/qcrud/_services/baseService.js';
 import {
     checkPushNotifications,
     notificationFirebase,
     onBackgroundMessage,
     detectDevice,
-} from '@imagina/qnotification/_store/firebase/plugins/notificationUtils';
+} from 'modules/qnotification/_store/firebase/plugins/notificationUtils';
 import {
     StateContract,
     StoreContract,

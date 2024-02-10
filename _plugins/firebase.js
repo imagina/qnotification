@@ -4,7 +4,7 @@ import axios from 'axios';
 import moment from 'moment'
 import CryptoJS from 'crypto-js';
 
-import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts'
+import storeFirebase from 'modules/qnotification/_store/firebase/index.ts'
 
 export async function getTokenFirebase(userId) {
   if(storeFirebase.token.length > 0) return;

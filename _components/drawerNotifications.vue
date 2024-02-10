@@ -57,9 +57,9 @@
 
 <script>
 
-import storeFirebase from '@imagina/qnotification/_store/firebase/index.ts';
+import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
-import eventBus from '@imagina/qsite/_plugins/eventBus'
+import eventBus from 'modules/qsite/_plugins/eventBus'
 export default {
   beforeDestroy() {
     eventBus.off('inotification.notifications.new')
@@ -110,7 +110,7 @@ export default {
       //Default response
       let response = []
       let notifications = this.$clone(this.notifications)
-      
+
       //Emit badge
       eventBus.emit('header.badge.manage', {notification: false})
 

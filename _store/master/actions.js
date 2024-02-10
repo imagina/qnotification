@@ -1,4 +1,4 @@
-import crud from '@imagina/qcrud/_services/baseService'
+import crud from 'modules/qcrud/_services/baseService'
 
 //Get all user teams
 export const GET_UNREAD_COUNT = ({state, commit, dispatch, rootState}, params = {}) => {

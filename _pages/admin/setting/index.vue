@@ -27,8 +27,8 @@
 </template>
 <script>
 //Components
-import providers from '@imagina/qnotification/_components/providers'
-import rules from '@imagina/qnotification/_components/rules'
+import providers from 'modules/qnotification/_components/providers'
+import rules from 'modules/qnotification/_components/rules'
 
 export default {
   props: {},
