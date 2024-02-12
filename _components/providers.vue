@@ -47,7 +47,7 @@
                     @validation-error="$alert.error($tr('isite.cms.message.formInvalid'))">
               <!--Fields-->
               <dynamic-field v-for="(field, name) in providerFields" :key="name" :field="field"
-                             v-if="!field.isFakeField" v-model="modal.form[field.name || name]"
+                             v-if="!field?.isFakeField" v-model="modal.form[field.name || name]"
                              @enter="$refs.formProviderConfig.submit()"/>
               <!--Fake Fields-->
               <dynamic-field :field="field" v-else @enter="$refs.formProviderConfig.submit()"
@@ -108,7 +108,7 @@ export default {
       for (var fieldName in fields) {
         let field = fields[fieldName]
         //Add fake field to form
-        if (field.isFakeField) {
+        if (field?.isFakeField) {
           let nameFakeField = this.getNameFakeField(field)
           if (!this.modal.form[nameFakeField]) this.modal.form[nameFakeField] = {}
           //Add fake field value
@@ -156,7 +156,7 @@ export default {
 
     //Return name fakeField
     getNameFakeField(field) {
-      return (typeof field.isFakeField == 'string') ? field.isFakeField : 'options'
+      return (typeof field?.isFakeField == 'string') ? field?.isFakeField : 'options'
     },
 
     //Return config to show provider status
