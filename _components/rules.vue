@@ -7,7 +7,7 @@
     </div>
 
     <!--Dialog Form Rules notification-->
-    <q-dialog id="modalFormRulesConfig" content-class="modal-form-notification-rules"
+    <q-dialog id="modalFormRulesConfig" class="modal-form-notification-rules"
               v-model="modal.show" no-esc-dismiss no-backdrop-dismiss @show="resetModal()">
       <q-card>
         <!--Header-->
