@@ -1,4 +1,4 @@
-import eventBus from 'modules/qsite/_plugins/eventBus'
+import { eventBus } from 'src/plugins/utils'
 import Echo from "laravel-echo"
 import Pusher from "pusher-js"
 import crud from 'modules/qcrud/_services/baseService'

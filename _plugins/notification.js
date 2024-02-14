@@ -1,5 +1,5 @@
 import laravelEcho from 'modules/qnotification/_plugins/laravel-echo'
-import alert from 'modules/qsite/_plugins/alert'
+import { alert } from 'src/plugins/utils'
 
 export default class NotificationPlugin {
   constructor(store) {
