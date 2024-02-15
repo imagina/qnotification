@@ -46,12 +46,21 @@
             <q-form autocorrect="off" autocomplete="off" ref="formProviderConfig" @submit="saveProviderConfig()"
                     @validation-error="$alert.error($tr('isite.cms.message.formInvalid'))">
               <!--Fields-->
-              <dynamic-field v-for="(field, name) in providerFields" :key="name" :field="field"
-                             v-if="!field?.isFakeField" v-model="modal.form[field.name || name]"
-                             @enter="$refs.formProviderConfig.submit()"/>
-              <!--Fake Fields-->
-              <dynamic-field :field="field" v-else @enter="$refs.formProviderConfig.submit()"
-                             v-model="modal.form[getNameFakeField(field)][field.name || name]"/>
+              <template v-for="(field, name) in providerFields" :key="name">
+                <dynamic-field
+                  :field="field"
+                  v-if="!field?.isFakeField"
+                  v-model="modal.form[field.name || name]"
+                  @enter="$refs.formProviderConfig.submit()"
+                />
+                <!--Fake Fields-->
+                <dynamic-field
+                  :field="field"
+                  v-else
+                  @enter="$refs.formProviderConfig.submit()"
+                  v-model="modal.form[getNameFakeField(field)][field.name || name]"
+                />
+              </template>
             </q-form>
           </q-card-section>
 
