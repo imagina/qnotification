@@ -1,7 +1,8 @@
 import moment from 'moment';
 import store from 'modules/qnotification/_store/firebase';
-import { computed, ComputedRef, getCurrentInstance } from 'vue';
+import { computed, ComputedRef } from 'vue';
 import { MessagePayload } from "firebase/messaging";
+import { uid } from 'src/plugins/utils'
 
 /**
  * Displays a notification on the user interface and sends a push notification.
@@ -12,7 +13,6 @@ import { MessagePayload } from "firebase/messaging";
  * @param {string} payload.notification.body - Body of the notification.
  */
 export function notificationFirebase(payload: MessagePayload): void {
-  const proxy = getCurrentInstance().appContext.config.globalProperties
     const title = payload.notification!.title!;
     const notificationOptions: any = {
         body: payload.notification!.body,
@@ -20,7 +20,7 @@ export function notificationFirebase(payload: MessagePayload): void {
     };
 
     const notification = {
-        id: notificationOptions.id || proxy.$uid(),
+        id: notificationOptions.id || uid(),
         message: `<b>${title}</b> ${notificationOptions.body}`,
         icon: notificationOptions.icon || 'fas fa-bell',
         createdAt: notificationOptions.createdAt || moment(),
