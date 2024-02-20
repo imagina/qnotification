@@ -73,7 +73,7 @@ export default class echo {
           if (!response.isAction) response.frontEvent = {...response, name: 'inotification.notifications.new'}
           //Custom event from backend
           if (response.frontEvent && response.frontEvent.name) {
-            eventBus.$emit(response.frontEvent.name, response.frontEvent)
+            eventBus.emit(response.frontEvent.name, response.frontEvent)
           }
         })
     }
