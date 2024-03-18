@@ -1,8 +1,5 @@
-import { initializeApp } from "firebase/app";
 import { getMessaging, getToken } from "firebase/messaging";
-import axios from 'axios';
-import moment from 'moment'
-import CryptoJS from 'crypto-js';
+import { initFirebaseApp } from './initializeFirebaseApp'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts'
 
@@ -12,28 +9,8 @@ export async function getTokenFirebase(userId) {
     const registrations = await navigator.serviceWorker.getRegistrations();
     if(registrations.length === 0) return;
   }
-  const currentDate = moment().format('YYYY-MM-DD');
-  const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${currentDate}firebase`).toString();
-  axios.get(`https://staging-siembra-coffe.ozonohosting.com/api/notification/v1/providers/firebase?filter={%22field%22:%20%22system_name%22}&token=${md5Hash}`)
-    .then(response => {
-      const json = response.data;
-      if (json.errors === 'Unauthorized') {
-        return
-      };
-      const firebaseConfig = {
-        apiKey: json.data.fields.firebaseApiKey,
-        authDomain: json.data.fields.firebaseAuthDomain,
-        projectId: json.data.fields.firebaseProjectId,
-        storageBucket: json.data.fields.firebaseStorageBucket,
-        messagingSenderId: json.data.fields.firebaseMessagingSenderId,
-        appId: json.data.fields.firebaseAppId,
-        measurementId: json.data.fields.firebaseMeasurementId
-      }
-      const app = initializeApp(firebaseConfig);
-      notificationToken(app, json.data.fields.firebaseWebPushCertificateKeyPair, userId);
-    }).catch(error => {
-      console.log(error);
-    });
+  const { app, firebaseWebPushCertificateKeyPair } = await initFirebaseApp();
+  notificationToken(app, firebaseWebPushCertificateKeyPair, userId);
 }
 
 

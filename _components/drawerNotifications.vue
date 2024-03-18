@@ -17,32 +17,44 @@
     <q-scroll-area :thumb-style="thumbStyle" v-if="notificationsData.length" class="relative-position"
                    style="height: calc(100vh - 93px); width: 100%">
       <!--Notifications List-->
-      <div v-for="notification in notificationsData" :key="notification.id" @click="handlerActon(notification)"
-           :class="`item ${notification.link ? 'cursor-pointer' : ''}`">
-        <!--Content Notification-->
-        <div class="relative-position q-pl-xl">
-          <div class="row items-center q-pl-sm">
-            <!--Bagde is read-->
-            <q-badge v-if="!notification.isRead" :color="notification.isImportant ? 'orange' : 'primary'"
-                     rounded floating/>
-            <!--Icon-->
-            <q-icon color="green" class="icon-item" :name="notification.icon"/>
-            <!--Content-->
-            <div class="text-item row items-center">
-              <!--Message-->
-              <div class="ellipsis-3-lines q-pr-xs text-grey-8">
-                <div v-html="notification.message" ></div>
-                <q-tooltip :delay="1000" max-width="250px">
-                  <label v-html="notification.message" ></label>
-                </q-tooltip>
-              </div>
-              <!--Date-->
-              <div class="col-12 text-grey-6 text-caption">
-                {{ $date.getHumanCalendar(notification.createdAt) }}
-              </div>
-            </div>
+      <div 
+        v-for="notification in notificationsData" 
+        :key="notification.id" 
+        @click="handlerActon(notification)"
+        :class="{
+          'tw-cursor-pointer': notification.link,
+        }"
+        class="
+          tw-flex-col
+          tw-rounded-lg
+          tw-shadow-lg
+          tw-bg-white
+          tw-p-3.5
+          tw-mr-4
+          tw-mb-4
+        "
+      >
+        <section class="tw-flex">
+          <div class="tw-mr-2">
+            <q-badge 
+              v-if="!notification.isRead" 
+              :color="notification.isImportant ? 'orange' : 'primary'"
+              rounded
+              class="tw-mt-2"
+            />
           </div>
-        </div>
+          <div>
+            <p 
+              v-if="notification.message"
+              class="tw-text-base tw-font-medium tw-mb-1.5" 
+            >
+              {{ notification.message }}
+            </p>
+            <p class="tw-text-gray-400">
+              {{ $date.getHumanCalendar(notification.createdAt) }}
+            </p>
+          </div>
+        </section>
       </div>
       <!--Actions-->
       <div class="text-center q-py-md" v-if="(this.pagination.page == this.pagination.lastPage) ? false : true">

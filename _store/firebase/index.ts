@@ -1,4 +1,4 @@
-import Vue, { reactive, computed } from 'vue';
+import { reactive, computed } from 'vue';
 import { getMessaging, onMessage, MessagePayload } from "firebase/messaging";
 import baseService from 'modules/qcrud/_services/baseService.js';
 import {
