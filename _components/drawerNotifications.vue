@@ -1,6 +1,6 @@
 <template>
   <!--Content notifications-->
-  <div id="drawerNotificationsComponent">
+  <div id="drawerNotificationsComponent" class="tw-bg-gray-100">
     <!-- ===== Header ===== -->
     <div class="row justify-between items-center q-pr-md">
       <div class="text-subtitle1 row items-center">
