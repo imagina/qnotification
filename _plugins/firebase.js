@@ -30,6 +30,7 @@ export async function getTokenFirebase(userId) {
         measurementId: json.data.fields.firebaseMeasurementId
       }
       const app = initializeApp(firebaseConfig);
+      if(!json.data.fields.firebaseWebPushCertificateKeyPair) return;
       notificationToken(app, json.data.fields.firebaseWebPushCertificateKeyPair, userId);
     }).catch(error => {
       console.log(error);
