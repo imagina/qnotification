@@ -10,7 +10,7 @@ export async function getTokenFirebase(userId) {
     if(registrations.length === 0) return;
   }
   const { app, firebaseWebPushCertificateKeyPair } = await initFirebaseApp();
-  if(!firebaseWebPushCertificateKeyPai) return;
+  if(!firebaseWebPushCertificateKeyPair) return;
   notificationToken(app, firebaseWebPushCertificateKeyPair, userId);
 }
 
