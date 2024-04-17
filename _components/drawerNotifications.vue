@@ -73,7 +73,7 @@ import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
 import { eventBus } from 'src/plugins/utils'
 export default {
-  beforeDestroy() {
+  beforeUnmount() {
     eventBus.off('inotification.notifications.new')
   },
   props: {},
@@ -83,7 +83,7 @@ export default {
       this.init()
     })
   },
-  beforeDestroy() {
+  beforeUnmount() {
     storeFirebase.removeEvent();
   },
   watch: {
