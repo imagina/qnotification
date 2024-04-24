@@ -15,7 +15,7 @@ export default {
         apiRoute: 'apiRoutes.qnotification.notifications',
         permission: 'notification.notifications',
         create: {
-          title: 'Nueva Notificación (PT)',
+          title: this.$tr('notification.cms.newNotification'),
           requestParams: {
             notToSnakeCase: ['saveInDatabase']
           }
@@ -25,7 +25,7 @@ export default {
             { name: 'id', label: this.$tr('isite.cms.form.id'), field: 'id', style: 'width: 50px' },
             { name: 'title', label: this.$tr('isite.cms.form.title'), field: 'title', align: 'rigth' },
             { name: 'recipient', label: this.$tr('isite.cms.label.recipient'), field: 'recipient', align: 'rigth' },
-            { name: 'message', label: 'Mesnaje (PT)', field: 'message', align: 'rigth' },
+            { name: 'message', label: this.$tr('notification.cms.label.message'), field: 'message', align: 'rigth' },
             {
               name: 'created_at', label: this.$tr('isite.cms.form.createdAt'), field: 'createdAt', align: 'right',
               format: val => val ? this.$trd(val) : '-'
@@ -81,7 +81,7 @@ export default {
             value: '',
             type: 'html',
             props: {
-              label: `Mensaje(PT) *`,
+              label: `${this.$tr('notification.cms.label.message')} *`,
               rules: [
                 val => !!val || this.$tr('isite.cms.message.fieldRequired')
               ],
