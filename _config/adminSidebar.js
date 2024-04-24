@@ -1,4 +1,4 @@
-import pages from 'src/setup/pages'
+import pages from 'src/setup/pages';
 
 export default [
   {
@@ -6,7 +6,8 @@ export default [
     icon: 'fa-light fa-bell-on',
     children: [
       pages.qnotification.setting,
+      pages.qnotification.notification
       //pages.qnotification.notification
     ]
-  },
-]
+  }
+];
