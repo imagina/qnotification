@@ -15,7 +15,10 @@ export default {
         apiRoute: 'apiRoutes.qnotification.notifications',
         permission: 'notification.notifications',
         create: {
-          title: 'Nueva Notificación (PT)'
+          title: 'Nueva Notificación (PT)',
+          requestParams: {
+            notToSnakeCase: ['saveInDatabase']
+          }
         },
         read: {
           columns: [
@@ -38,40 +41,65 @@ export default {
         delete: true,
         formLeft: {
           id: { value: '' },
+          type: {
+            value: 'email',
+            type: 'select',
+            required: true,
+            props: {
+              label: `${this.$tr('isite.cms.form.type')}*`,
+              options: [
+                {label: 'Email', value: 'email'},
+              ],
+            }
+          },
           title: {
             value: '',
             type: 'input',
-            require: true,
+            required: true,
             props: {
               label: `${this.$tr('isite.cms.form.title')}*`
             }
           },
-          to: {
-            value: '',
-            type: 'input',
-            require: true,
+          email: {
+            value: [],
+            type: 'treeSelect',
+            required: true,
+            fakeFieldName: 'to',
             props: {
-              label: `${this.$tr('isite.cms.label.recipient')}*`
-            }
-          },
-          type: {
-            value: 'email',
-            type: 'select',
-            require: true,
-            props: {
-              label: `${this.$tr('isite.cms.form.type')}*`,
-              options: [
-                {label: this.$tr('isite.cms.label.email'), value: 'email'},
+              label: `${this.$trp('isite.cms.label.recipient')}*`,
+              multiple: true,
+              rules: [
+                val => !!val?.length || this.$tr('isite.cms.message.fieldRequired')
               ],
+            },
+            loadOptions: {
+              apiRoute: 'apiRoutes.quser.users',
+              select: {label: 'email', id: 'email'}
             }
           },
           message: {
             value: '',
             type: 'html',
-            require: true,
             props: {
-              label: `Mensaje(PT) *`
+              label: `Mensaje(PT) *`,
+              rules: [
+                val => !!val || this.$tr('isite.cms.message.fieldRequired')
+              ],
             }
+          },
+          saveInDatabase: {
+            fakeFieldName: 'setting',
+            name: "saveInDatabase",
+            value: '0',
+            type: 'select',
+            required: true,
+            props: {
+              label: 'Save in database',
+              options: [
+                { label: 'enabled', value: '1' },
+                { label: 'disabled', value: '0' },
+              ],
+            },
           }
         }
       };
