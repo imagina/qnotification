@@ -1,6 +1,9 @@
 <template>
   <!--Content notifications-->
-  <div id="drawerNotificationsComponent" class="tw-bg-gray-100">
+  <div 
+    id="drawerNotificationsComponent" 
+    class="tw-bg-gray-100 tw-h-full tw-pl-4 tw-pt-4"
+  >
     <!-- ===== Header ===== -->
     <div class="row justify-between items-center q-pr-md">
       <div class="text-subtitle1 row items-center">
@@ -14,52 +17,78 @@
     <!--Separator-->
     <q-separator class="q-my-md"/>
     <!--Notifications-->
-    <q-scroll-area :thumb-style="thumbStyle" v-if="notificationsData.length" class="relative-position"
-                   style="height: calc(100vh - 93px); width: 100%">
+    <q-scroll-area
+      :thumb-style="thumbStyle" 
+      v-if="notificationsData.length"
+      class="scroll-area"
+    >
       <!--Notifications List-->
-      <div 
-        v-for="notification in notificationsData" 
-        :key="notification.id" 
-        @click="handlerActon(notification)"
-        :class="{
-          'tw-cursor-pointer': notification.link,
-        }"
-        class="
-          tw-flex-col
-          tw-rounded-lg
-          tw-shadow-lg
-          tw-bg-white
-          tw-p-3.5
-          tw-mr-4
-          tw-mb-4
-        "
-      >
-        <section class="tw-flex">
-          <div class="tw-mr-2">
-            <q-badge 
-              v-if="!notification.isRead" 
-              :color="notification.isImportant ? 'orange' : 'primary'"
-              rounded
-              class="tw-mt-2"
-            />
-          </div>
-          <div>
-            <p 
-              v-if="notification.message"
-              class="tw-text-base tw-font-medium tw-mb-1.5" 
-            >
-              {{ notification.message }}
-            </p>
-            <p class="tw-text-gray-400">
-              {{ $date.getHumanCalendar(notification.createdAt) }}
-            </p>
-          </div>
-        </section>
-      </div>
+      <template v-for="notification in notificationsData">
+        <div 
+          v-if="notification.message"
+          :key="notification.id" 
+          @click="handlerActon(notification)"
+          :class="{
+            'tw-cursor-pointer': notification.link,
+          }"
+          class="
+            tw-flex-col
+            tw-rounded-lg
+            tw-shadow-lg
+            tw-bg-white
+            tw-p-3.5
+            tw-mr-4
+            tw-mb-4
+          "
+        >
+          <section class="tw-flex">
+            <div class="tw-mr-2">
+              <q-badge 
+                v-if="!notification.isRead" 
+                :color="notification.isImportant ? 'orange' : 'primary'"
+                rounded
+                class="tw-mt-2"
+              />
+            </div>
+            <div>
+              <p
+                class="tw-text-sm tw-font-medium tw-mb-1.5" 
+                :class="{
+                  'tw-text-gray-500': notification.isRead,
+                  'tw-text-black': !notification.isRead,
+                }"
+              >
+                {{ notification.message }}
+              </p>
+              <p class="tw-text-xs tw-text-gray-400">
+                {{ $date.getHumanCalendar(notification.createdAt) }}
+              </p>
+            </div>
+          </section>
+        </div>
+      </template>
       <!--Actions-->
-      <div class="text-center q-py-md" v-if="(this.pagination.page == this.pagination.lastPage) ? false : true">
+      <div 
+        v-if="!(this.pagination.page == this.pagination.lastPage)"
+        class="text-center" 
+      >
         <!--Load more notifications-->
-        <q-btn unelevated color="green" rounded no-caps :label="$trp('isite.cms.label.showMore')" @click="getData()"/>
+        <q-btn 
+          flat
+          rounded 
+          no-caps 
+          color="primary"
+          :label="$trp('isite.cms.label.showMore')" 
+          @click="getData()"
+        />
+      </div>
+      <div
+        v-else
+        class="text-center tw-mt-4"
+      >
+        <label class="tw-text-gray-500">
+          {{ $tr('isite.cms.message.noMoreNotifications') }}
+        </label>
       </div>
       <!--Inner loading-->
       <inner-loading :visible="loading"/>
@@ -105,6 +134,7 @@ export default {
         width: '5px',
         opacity: 0.1
       },
+      refScrollArea: null,
       pagination: {
         page: 0,
         perPage: 15,
@@ -242,8 +272,9 @@ export default {
 </script>
 <style lang="scss">
 #drawerNotificationsComponent {
-  padding: 16px 0 16px 16px;
-  height: 100%;
+  .scroll-area {
+    height: 92%;
+  }
 
   .item {
     font-size: 13px;
