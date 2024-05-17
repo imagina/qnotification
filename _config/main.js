@@ -3,5 +3,6 @@ export default {
   //Entities
   entityNames: {
     rule: 'rule',
+    notification: 'notification'
   },
 }

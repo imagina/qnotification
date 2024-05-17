@@ -13,5 +13,20 @@ export default {
     subHeader: {
       refresh: true,
     }
+  },
+  notification: {
+    permission: 'notification.notifications.manage',
+    activated: true,
+    path: '/notificaciones/panel',
+    name: 'notification.admin.notification',
+    crud: import('@imagina/qnotification/_crud/notifications'),
+    layout: () => import('@imagina/qsite/_layouts/master'),
+    page: () => import('@imagina/qcrud/_pages/admin/crudPage'),
+    title: 'notification.cms.sidebar.adminPanel',
+    icon: 'fa-light fa-panel-ews',
+    authenticated: true,
+    subHeader: {
+      refresh: true,
+    }
   }
 }
