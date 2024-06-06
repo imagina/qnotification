@@ -32,56 +32,79 @@
           </div>       
         </div>
         <div class="col-xs-12 col-sm-3 col-md-2">
-            <div class="tw-flex-1">
-              <div class="tw-flex tw-justify-end">
-                <q-btn
-                  rounded
-                  dense
-                  unelevated
-                  no-caps 
-                  text-color="primary"
-                  size="md"
-                  style="border: 1px solid rgba(0, 13, 71, 0.15)"
-                  @click="markAllAsRead()"
-                  label="Mark all as read"                
-                />   
-              </div>
-            </div>            
-          </div> 
-        </div>      
-        <!-- notifications-->        
-        <div v-for="(notification, index) in notifications" :key="index">
-          <q-item clickable v-ripple  >
-            <q-item-section avatar>
-              <q-icon :name="notification.icon" color="black" size="24px"></q-icon>
-            </q-item-section>                
+          <div class="tw-flex-1">
+            <div class="tw-flex tw-justify-end">
+              <q-btn
+                rounded
+                dense
+                unelevated
+                no-caps 
+                text-color="primary"
+                size="md"
+                style="border: 1px solid rgba(0, 13, 71, 0.15)"
+                @click="markAllAsRead()"
+                label="Mark all as read"                
+              />   
+            </div>
+          </div>            
+        </div> 
+      </div>      
+      <!-- notifications-->
+      <div class="row"">
+        <div class="col-12" v-if="notifications.length > 0">
+          <div v-for="(notification, index) in notifications" :key="index">
+            <q-item v-ripple>
+              <q-item-section avatar>
+                <q-icon :name="notification.icon" color="black" size="24px"></q-icon>
+              </q-item-section>                
 
-            <q-item-section top>
-              <q-item-label lines="1">
-                <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
-              </q-item-label>
-              <q-item-label>
-                <div class="text-body2" v-html="notification.message">
-                </div>                    
-              </q-item-label>
-              <q-item-label lines="1">
-                <span class="text-weight-small text-grey-8">{{ notification.timeAgo }}</span>                    
-              </q-item-label>                  
-            </q-item-section>
-            <q-item-section side top v-show="!notification.isRead">
-              <q-item-label lines="1">
+              <q-item-section top>
+                <q-item-label lines="1">
+                  <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
+                </q-item-label>
+                <q-item-label>
+                  <div class="text-body2" v-html="notification.message">
+                  </div>                    
+                  <div>
+                    Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años
+                  </div>
+                </q-item-label>
+                <q-item-label lines="1">
+                  <span class="text-weight-small text-grey-8">{{ notification.timeAgo }}</span>                    
+                </q-item-label>                  
+              </q-item-section>
+              <!-- unread notification -->
+              <q-item-section side top v-show="!notification.isRead">              
                 <div>
                   <q-badge color="blue" rounded />                  
                 </div>
-              </q-item-label>
-              <q-item-label style="margin-top: 20px;"  @click="markAsRead(notification)">Mark as read</q-item-label>             
-            </q-item-section>
-          </q-item>
-          <q-separator spaced inset />
+                <div class="tw-flex-1 tw-content-end">
+                  <q-btn
+                    rounded
+                    dense
+                    unelevated
+                    no-caps                   
+                    size="md"                  
+                    @click="markAsRead(notification)"
+                    label="Mark as read"
+                  />
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-separator spaced inset />
+          </div>
         </div>
-        
+        <div class="col-12" v-else>
+          <div class="tw-h-64 tw-content-center tw-justify-center"  >          
+              <not-result />
+          </div>
+        </div>
       </div>
-        <div class="q-pa-xl flex flex-center">
+           
+      <!--pagination -->
+      
+        
+      <div class="q-pa-xl flex flex-center">
           <q-pagination
             v-model="pagination.currentPage"
             v-show="pagination.lastPage > 1 && !loading"
