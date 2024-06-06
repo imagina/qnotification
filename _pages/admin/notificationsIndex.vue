@@ -7,6 +7,7 @@
           <label style="font-size: 20px;">Notifications</label>
         </div>
       </div>
+      <
       <!-- tabs -->      
       <div class="row q-my-md">
         <div class="col-xs-12 col-sm-12 col-md-6">
@@ -47,7 +48,7 @@
             </div>
           </div>
         </div>
-      </div>      
+      </div>
       <!-- notifications-->
       <div class="row q-pa-md">
         <div class="col-12" v-if="notifications.length > 0">
@@ -68,7 +69,7 @@
                   </div>
                 </q-item-label>
                 <q-item-label lines="1">
-                  <span class="text-weight-small text-grey-8">{{ notification.timeAgo }}</span>                    
+                  <span class="text-caption text-grey-8">{{ notification.timeAgo }}</span>
                 </q-item-label>                  
               </q-item-section>
               <!-- unread notification -->
@@ -94,7 +95,7 @@
         </div>
         <div class="col-12" v-else>
           <div class="tw-h-64 tw-content-center tw-justify-center"  >          
-            <not-result />
+            <not-result v-if="!loading"/>
           </div>
         </div>
       </div>
@@ -147,20 +148,8 @@ import baseService from '@imagina/qcrud/_services/baseService'
             props: {
               label: 'Source',
               clearable: true,
-              options: [
-                {label: 'iadmin', value: 'iadmin'},
-                {label: 'ichat', value: 'ichat'},
-                {label: 'ifollow', value: 'ifollow'},
-                {label: 'icommerce', value: 'icommerce'},
-              ],
+              options: []
             },
-            /*
-            loadOptions: {
-              apiRoute: 'apiRoutes.qad.categories',
-              select: {label: 'title', id: 'id'},
-              requestParams: {include: 'parent'}
-            }
-            */
           },
           date: {
             type: 'date',
@@ -204,22 +193,53 @@ import baseService from '@imagina/qcrud/_services/baseService'
           perPage: 10,
           total: 0
         }, 
-      }
+        sourceSettings: null
+      } 
     },
     computed: {},
     methods: {
 
-      init(){
-        this.getNotifications()
+      async init(){
+        await this.getSources()
+        await this.getNotifications()
       },
 
       getIcon(notification){
-        return notification?.icon ? notification.icon : 'fa-light fa-bell'
+        return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].icon : 'fa-light fa-bell'
       },
 
       getIconColor(notification){
-        return notification?.source?.color ? notification.source.color : '#2196f3'
-        //return notification?.source?.color ? notification?.source?.color :  '#7e339e'
+        return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].color : '#2196f3'
+      },
+
+      getSources(){
+        return new Promise((resolve, reject) => {
+          this.loading = true
+          //Request Params
+          let requestParams = {
+            refresh: true,
+            params: {filter: {allTranslations: true, configNameByModule: 'config.notificationSource'}}
+          }
+          //Request
+          baseService.index('apiRoutes.qsite.configs', requestParams).then(response => {
+            for (const [key, value] of Object.entries(response.data)) {
+              if(value != null){
+                this.sourceSettings = {...this.sourceSettings, ...response.data[key]}
+              }
+            }
+            //add source filter options
+            for (const [key, value] of Object.entries(this.sourceSettings)) {
+              this.formFields.source.props.options.push({label: this.sourceSettings[key]['label'], value: key})
+            }
+            this.loading = false
+            resolve(true)
+          }).catch(error => {
+            this.loading = false
+            this.$apiResponse.handleError(error, () => {
+              resolve(error)
+            })
+          })
+        })
       },
       
       //Get notifications
@@ -307,9 +327,9 @@ import baseService from '@imagina/qcrud/_services/baseService'
   </script>
   <style lang="stylus">
     .notifications-notification-icon {
-      border-radius: 50%;
-      width: 34px;
-      height: 34px;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
       border: 2px;
       border-style: solid;
     }
