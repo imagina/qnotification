@@ -1,15 +1,15 @@
 <template>
     <q-page id="notificationsIndex">
       <!--Content-->
-      <div id="notificationsIndexTitle" class="row q-col-gutter-y-sm full-width items-center justify-between">
+      <div id="notificationsIndexTitle" class="row q-col-gutter-y-sm full-width items-center justify-between q-mt-md">
       <!--Title-->
         <div class="row text-primary text-weight-bold ellipsis title-content items-center">
           <label style="font-size: 20px;">Notifications</label>
         </div>
       </div>
-      {{ filters.tab }}
-      <div class="row justify-evenly">
-        <div class="col-12">
+      <!-- tabs -->      
+      <div class="row q-col-gutter-sm q-mt-md">
+        <div class="col-xs-12 col-sm-12 col-md-6">
           <q-tabs
             v-model="filters.tab"
             dense
@@ -24,37 +24,41 @@
             <q-tab v-for="(tab, index) in tabs" :key="index" :name="tab.name"  :label="tab.label" />             
           </q-tabs>
         </div>
-      </div>
-      <!--filters-->
-      <div :style="filterStyle">
-        <div class="row q-col-gutter-sm"">
+        <!--filters-->
+        <div class="col-xs-12 col-sm-9 col-md-4">
+          <div class="tw-flex tw-gap-2">
             <dynamic-field v-for="(field, keyField) in formFields" :key="keyField" :field="field"
-                                    v-model="filters[keyField]" class="col-4"/>        
-            <div class="col-4">
-              <q-btn
-                rounded
-                dense
-                unelevated
-                no-caps 
-                text-color="primary"
-                size="md"
-                style="border: 1px solid rgba(0, 13, 71, 0.15)"
-                @click="markAllAsRead()"
-                label="Mark all as read"                
-                />    
+                                      v-model="filters[keyField]" class=""/> 
+          </div>       
+        </div>
+        <div class="col-xs-12 col-sm-3 col-md-2">
+            <div class="tw-flex-1">
+              <div class="tw-flex tw-justify-end">
+                <q-btn
+                  rounded
+                  dense
+                  unelevated
+                  no-caps 
+                  text-color="primary"
+                  size="md"
+                  style="border: 1px solid rgba(0, 13, 71, 0.15)"
+                  @click="markAllAsRead()"
+                  label="Mark all as read"                
+                />   
               </div>
-        </div>           
-      </div>
-      <div class="q-pa-md">
-        <q-list v-for="(notification, index) in notifications" :key="index">
-          <q-item clickable v-ripple>
+            </div>            
+          </div> 
+        </div>      
+        <!-- notifications-->        
+        <div v-for="(notification, index) in notifications" :key="index">
+          <q-item clickable v-ripple  >
             <q-item-section avatar>
               <q-icon :name="notification.icon" color="black" size="24px"></q-icon>
             </q-item-section>                
 
             <q-item-section top>
               <q-item-label lines="1">
-                <span class="text-weight-medium text-weight-bold">{{notification.source}}</span>                    
+                <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
               </q-item-label>
               <q-item-label>
                 <div class="text-body2" v-html="notification.message">
@@ -64,18 +68,18 @@
                 <span class="text-weight-small text-grey-8">{{ notification.timeAgo }}</span>                    
               </q-item-label>                  
             </q-item-section>
-            <q-item-section side v-show="!notification.isRead">
+            <q-item-section side top v-show="!notification.isRead">
               <q-item-label lines="1">
                 <div>
-                  <q-badge color="blue" rounded />
+                  <q-badge color="blue" rounded />                  
                 </div>
               </q-item-label>
-              <q-item-label lines="1">
-                <q-item-label caption  @click="markAsRead(notification)">Mark as read</q-item-label>
-              </q-item-label>
+              <q-item-label style="margin-top: 20px;"  @click="markAsRead(notification)">Mark as read</q-item-label>             
             </q-item-section>
           </q-item>
-        </q-list>             
+          <q-separator spaced inset />
+        </div>
+        
       </div>
         <div class="q-pa-xl flex flex-center">
           <q-pagination
@@ -117,7 +121,25 @@ import baseService from '@imagina/qcrud/_services/baseService'
     data() {
       return {
         loading: false,
-        notifications: [],
+        notifications: [],        
+        formFields: {
+          date: {
+            type: 'date',
+            props: {
+              clearable: true,
+              label: `${this.$tr('isite.cms.form.date')}*`,
+              size: 'sm'
+            }
+          },
+          search: {
+            type: 'search',
+            props: {
+              clearable: true
+            }
+          }
+          
+
+      },
         filters: {
           tab: 'all',
           date: null,
@@ -145,26 +167,7 @@ import baseService from '@imagina/qcrud/_services/baseService'
         }
       }
     },
-    computed: {
-      formFields() {
-        return {
-          date: {
-            type: 'date',
-            props: {
-              clearable: true,
-              abel: `${this.$tr('isite.cms.form.date')}*`,
-              size: 'sm'
-            }
-          },
-          search: {
-            type: 'search',
-            props: {
-              clearable: true
-            }
-          }
-          
-        }
-      },
+    computed: {      
       isMobile() {
         return this.$q.platform.is.mobile
       },
@@ -197,6 +200,10 @@ import baseService from '@imagina/qcrud/_services/baseService'
             filter: {
               me: true,
               type: 'broadcast',
+              order: {
+                field: 'id', 
+                way: 'desc'
+              }
             
             }
           }
@@ -204,7 +211,7 @@ import baseService from '@imagina/qcrud/_services/baseService'
         
         /* isread*/
         if(this.filters.tab != 'all'){          
-          //requestParams.params.filter['isRead'] = this.filters.tab == 'read' ? true : false
+          requestParams.params.filter['isRead'] = this.filters.tab == 'read' ? true : false
         }
 
         if(this.filters.date){
