@@ -8,7 +8,7 @@
         </div>
       </div>
       <!-- tabs -->      
-      <div class="row q-col-gutter-sm q-mt-md">
+      <div class="row q-my-md">
         <div class="col-xs-12 col-sm-12 col-md-6">
           <q-tabs
             v-model="filters.tab"
@@ -25,37 +25,38 @@
           </q-tabs>
         </div>
         <!--filters-->
-        <div class="col-xs-12 col-sm-9 col-md-4">
-          <div class="tw-flex tw-gap-2">
+        <div class="col-xs-12 col-sm-9 col-md-6">
+          <div class="row q-col-gutter-x-sm">
             <dynamic-field v-for="(field, keyField) in formFields" :key="keyField" :field="field"
-                                      v-model="filters[keyField]" class=""/> 
-          </div>       
-        </div>
-        <div class="col-xs-12 col-sm-3 col-md-2">
-          <div class="tw-flex-1">
-            <div class="tw-flex tw-justify-end">
-              <q-btn
-                rounded
-                dense
-                unelevated
-                no-caps 
-                text-color="primary"
-                size="md"
-                style="border: 1px solid rgba(0, 13, 71, 0.15)"
-                @click="markAllAsRead()"
-                label="Mark all as read"                
-              />   
+                                      v-model="filters[keyField]" class="col-xs-6 col-md-3 "/> 
+
+            <div class="col-xs-6 col-md-3">
+              <div class="tw-flex tw-justify-end">
+                <q-btn
+                  rounded
+                  dense
+                  unelevated
+                  no-caps 
+                  text-color="primary"
+                  size="md"
+                  style="border: 1px solid rgba(0, 13, 71, 0.15)"
+                  @click="markAllAsRead()"
+                  label="Mark all as read"                
+                />   
+              </div>
             </div>
-          </div>            
-        </div> 
+          </div>
+        </div>
       </div>      
       <!-- notifications-->
-      <div class="row"">
+      <div class="row q-pa-md">
         <div class="col-12" v-if="notifications.length > 0">
           <div v-for="(notification, index) in notifications" :key="index">
-            <q-item v-ripple>
+            <q-item v-ripple dense>
               <q-item-section avatar>
-                <q-icon :name="notification.icon" color="black" size="24px"></q-icon>
+                <div class="flex flex-center notifications-notification-icon" :style="{borderColor: getIconColor(notification) }">
+                  <q-icon :name="getIcon(notification)" :style="{color: getIconColor(notification), fontSize: '24px' }" />
+                </div>
               </q-item-section>                
 
               <q-item-section top>
@@ -64,9 +65,6 @@
                 </q-item-label>
                 <q-item-label>
                   <div class="text-body2" v-html="notification.message">
-                  </div>                    
-                  <div>
-                    Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años
                   </div>
                 </q-item-label>
                 <q-item-label lines="1">
@@ -96,14 +94,11 @@
         </div>
         <div class="col-12" v-else>
           <div class="tw-h-64 tw-content-center tw-justify-center"  >          
-              <not-result />
+            <not-result />
           </div>
         </div>
       </div>
-           
       <!--pagination -->
-      
-        
       <div class="q-pa-xl flex flex-center">
           <q-pagination
             v-model="pagination.currentPage"
@@ -145,7 +140,28 @@ import baseService from '@imagina/qcrud/_services/baseService'
       return {
         loading: false,
         notifications: [],        
-        formFields: {
+        formFields: {          
+          source: {
+            value: null,
+            type: 'select',
+            props: {
+              label: 'Source',
+              clearable: true,
+              options: [
+                {label: 'iadmin', value: 'iadmin'},
+                {label: 'ichat', value: 'ichat'},
+                {label: 'ifollow', value: 'ifollow'},
+                {label: 'icommerce', value: 'icommerce'},
+              ],
+            },
+            /*
+            loadOptions: {
+              apiRoute: 'apiRoutes.qad.categories',
+              select: {label: 'title', id: 'id'},
+              requestParams: {include: 'parent'}
+            }
+            */
+          },
           date: {
             type: 'date',
             props: {
@@ -159,14 +175,14 @@ import baseService from '@imagina/qcrud/_services/baseService'
             props: {
               clearable: true
             }
-          }
+          },
           
-
-      },
+        },
         filters: {
           tab: 'all',
           date: null,
-          time: null,        
+          time: null,
+          source: null
         }, 
         tabs: [
           {
@@ -187,28 +203,23 @@ import baseService from '@imagina/qcrud/_services/baseService'
           lastPage: 1, 
           perPage: 10,
           total: 0
-        }
+        }, 
       }
     },
-    computed: {      
-      isMobile() {
-        return this.$q.platform.is.mobile
-      },
-      filterStyle(){
-        return this.$q.platform.is.mobile ? 'margin-top:20px' :  "position: absolute;right: 0;z-index: 999;top: 0;margin-top: 30px;"
-      },      
-      groupBy(){
-        if(this.notifications.length > 0){
-          const objs = Object.groupBy(this.notifications, (notification) => notification?.source)  
-          return objs
-        }
-        return  []
-      },
-    },
+    computed: {},
     methods: {
 
       init(){
         this.getNotifications()
+      },
+
+      getIcon(notification){
+        return notification?.icon ? notification.icon : 'fa-light fa-bell'
+      },
+
+      getIconColor(notification){
+        return notification?.source?.color ? notification.source.color : '#2196f3'
+        //return notification?.source?.color ? notification?.source?.color :  '#7e339e'
       },
       
       //Get notifications
@@ -231,8 +242,7 @@ import baseService from '@imagina/qcrud/_services/baseService'
             }
           }
         }
-        
-        /* isread*/
+        /* filters */
         if(this.filters.tab != 'all'){          
           requestParams.params.filter['isRead'] = this.filters.tab == 'read' ? true : false
         }
@@ -244,6 +254,10 @@ import baseService from '@imagina/qcrud/_services/baseService'
         if(this.filters.search){
           requestParams.params.filter['search'] = this.filters.search
         }
+
+        if(this.filters.source){
+          requestParams.params.filter['source'] = this.filters.source
+        }
         
         return new Promise((resolve, reject) => {        
           baseService.index('apiRoutes.qnotification.notifications', requestParams).then(response => {
@@ -252,7 +266,6 @@ import baseService from '@imagina/qcrud/_services/baseService'
             this.pagination.total = response.meta.page.total
             resolve(
               this.notifications = response.data
-              //data: response.data.sort((a, b) => b.id - a.id)
             )
           }).catch(error => {
             this.$apiResponse.handleError(error, () => {
@@ -293,5 +306,12 @@ import baseService from '@imagina/qcrud/_services/baseService'
   }
   </script>
   <style lang="stylus">
+    .notifications-notification-icon {
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      border: 2px;
+      border-style: solid;
+    }
   </style>
   
