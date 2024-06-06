@@ -7,7 +7,6 @@ export default [
     children: [
       pages.qnotification.setting,
       pages.qnotification.notification,
-      pages.qnotification.notificationsIndex
     ]
   },
 ]
