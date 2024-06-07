@@ -1,5 +1,5 @@
 <template>
-    <q-page id="notificationsIndex">
+  <q-page id="notificationsIndex">
       <!--Content-->
       <div id="notificationsIndexTitle" class="row q-col-gutter-y-sm full-width items-center justify-between q-mt-md">
       <!--Title-->
@@ -7,7 +7,7 @@
           <label style="font-size: 20px;">Notifications</label>
         </div>
       </div>
-      <
+    
       <!-- tabs -->      
       <div class="row q-my-md">
         <div class="col-xs-12 col-sm-12 col-md-6">
@@ -53,45 +53,29 @@
       <div class="row q-pa-md">
         <div class="col-12" v-if="notifications.length > 0">
           <div v-for="(notification, index) in notifications" :key="index">
-            <q-item v-ripple dense>
-              <q-item-section avatar>
-                <div class="flex flex-center notifications-notification-icon" :style="{borderColor: getIconColor(notification) }">
-                  <q-icon :name="getIcon(notification)" :style="{color: getIconColor(notification), fontSize: '24px' }" />
-                </div>
-              </q-item-section>                
-
-              <q-item-section top>
-                <q-item-label lines="1">
-                  <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
-                </q-item-label>
-                <q-item-label>
-                  <div class="text-body2" v-html="notification.message">
-                  </div>
-                </q-item-label>
-                <q-item-label lines="1">
-                  <span class="text-caption text-grey-8">{{ notification.timeAgo }}</span>
-                </q-item-label>                  
-              </q-item-section>
-              <!-- unread notification -->
-              <q-item-section side top v-show="!notification.isRead">              
-                <div>
-                  <q-badge color="blue" rounded />                  
-                </div>
-                <div class="tw-flex-1 tw-content-end">
-                  <q-btn
-                    rounded
-                    dense
-                    unelevated
-                    no-caps                   
-                    size="md"                  
-                    @click="markAsRead(notification)"
-                    label="Mark as read"
-                  />
-                </div>
-              </q-item-section>
-            </q-item>
+            <notification-card
+              :notification="notification"
+              :icon="getIcon(notification)"
+              :icon-color="getIconColor(notification)"            
+            />
             <q-separator spaced inset />
           </div>
+          <div class="q-pa-xl flex flex-center">
+          <!--pagination -->
+          <q-pagination
+            v-model="pagination.currentPage"            
+            v-show="pagination.lastPage > 1 && !loading"
+            :max="pagination.lastPage"
+            :max-pages="6"
+            :ellipses="false"
+            :boundary-numbers="false"
+            unelevated
+            round
+            color="blue-grey"
+            active-color="primary"
+            direction-links
+          />
+      </div>
         </div>
         <div class="col-12" v-else>
           <div class="tw-h-64 tw-content-center tw-justify-center"  >          
@@ -99,35 +83,35 @@
           </div>
         </div>
       </div>
-      <!--pagination -->
-      <div class="q-pa-xl flex flex-center">
-          <q-pagination
-            v-model="pagination.currentPage"
-            v-show="pagination.lastPage > 1 && !loading"
-            :max="pagination.lastPage >= 5 ? 5 : pagination.lastPage"
-            direction-links
-          />
-        </div>
+      
+      
       <inner-loading :visible="loading"/>      
-    </q-page>
+  </q-page>
   </template>
-  <script>
+<script>
 //Components
 import baseService from '@imagina/qcrud/_services/baseService'
-  
+import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
   export default {
     props: {},
-    components: {},
-    watch: {
+    components: {
+      notificationCard
+    },
+    watch: {      
       'pagination.currentPage' : {
         handler: function(newValue) {
-          this.getNotifications()            
+          //prevents double call when page resets due tab selection
+          if(!this.lockPagination){
+            this.getNotifications()            
+          }
         },
-        deep: true
-      }, 
+      },
       'filters' : {
-        handler: function(newValue) {
-          this.getNotifications()            
+        handler: async function(newValue) {
+          this.lockPagination = true 
+          this.pagination.currentPage = 1;
+          await this.getNotifications()            
+          this.lockPagination = false
         },
         deep: true
       }, 
@@ -139,6 +123,7 @@ import baseService from '@imagina/qcrud/_services/baseService'
     },
     data() {
       return {
+        lockPagination: false,
         loading: false,
         notifications: [],        
         formFields: {          
@@ -245,7 +230,6 @@ import baseService from '@imagina/qcrud/_services/baseService'
       //Get notifications
       getNotifications() {
         this.loading = true
-
         let requestParams = {
           refresh: true,
           params: {
@@ -295,7 +279,6 @@ import baseService from '@imagina/qcrud/_services/baseService'
         })
       },
       markAsRead(notification){
-        console.log(notification.id)
         return new Promise((resolve, reject) => {        
           baseService.update('apiRoutes.qnotification.markRead', notification.id, {}).then(response => {            
             let notificationIndex = this.notifications.findIndex(item => item.id == notification.id)
@@ -309,8 +292,7 @@ import baseService from '@imagina/qcrud/_services/baseService'
         })
       },
       markAllAsRead(){
-        this.loading = true
-        console.log('markAllAsRead')
+        this.loading = true        
         return new Promise((resolve, reject) => {        
           baseService.put('apiRoutes.qnotification.markAllAsRead', {}).then(response => {
             this.loading = false
