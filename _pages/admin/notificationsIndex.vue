@@ -32,19 +32,9 @@
                                       v-model="filters[keyField]" class="col-xs-6 col-md-3 "/> 
 
             <div class="col-xs-6 col-md-3">
-              <div class="tw-flex tw-justify-end">
-                <q-btn
-                  rounded
-                  dense
-                  unelevated
-                  no-caps 
-                  text-color="primary"
-                  size="md"
-                  style="border: 1px solid rgba(0, 13, 71, 0.15)"
-                  @click="markAllAsRead()"
-                  label="Mark all as read"                
-                />   
-              </div>
+              <mark-all-as-read
+                @marked="resetPagination()" 
+              />
             </div>
           </div>
         </div>
@@ -91,10 +81,12 @@
 //Components
 import baseService from '@imagina/qcrud/_services/baseService'
 import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
+import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
   export default {
     props: {},
     components: {
-      notificationCard
+      notificationCard,
+      markAllAsRead
     },
     watch: {      
       'pagination.currentPage' : {
@@ -225,6 +217,13 @@ import notificationCard from '@imagina/qnotification/_components/notificationCar
           })
         })
       },
+
+      async resetPagination(){
+        this.lockPagination = true 
+        this.pagination.currentPage = 1;
+        await this.getNotifications()            
+        this.lockPagination = false
+      },
       
       //Get notifications
       getNotifications() {
@@ -246,8 +245,8 @@ import notificationCard from '@imagina/qnotification/_components/notificationCar
           }
         }
         /* filters */
-        if(this.filters.tab != 'all'){          
-          requestParams.params.filter['isRead'] = this.filters.tab == 'read' ? true : false
+        if(this.filters.tab != this.tabs[0].name){   //all        
+          requestParams.params.filter['isRead'] = this.filters.tab == this.tabs[1].name ? true : false //read/unread
         }
 
         if(this.filters.date){
@@ -290,19 +289,7 @@ import notificationCard from '@imagina/qnotification/_components/notificationCar
           })
         })
       },
-      markAllAsRead(){
-        this.loading = true        
-        return new Promise((resolve, reject) => {        
-          baseService.put('apiRoutes.qnotification.markAllAsRead', {}).then(response => {
-            this.loading = false
-            resolve(response)
-          }).catch(error => {
-            this.$apiResponse.handleError(error, () => {
-              this.loading = false
-            })
-          })
-        })
-      }
+      
     }
   }
   </script>

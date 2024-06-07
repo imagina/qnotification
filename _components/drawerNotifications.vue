@@ -13,33 +13,24 @@
               @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"/>
     </div>
     <!--Separator-->
-    <q-separator class="q-my-md"/>
-    <div class="tw-flex tw-justify-end">
-      <q-btn
-        v-if="false"
-          rounded
-          dense
-          unelevated
-          no-caps 
-          text-color="primary"
-          size="md"
-          style="border: 1px solid rgba(0, 13, 71, 0.15)"
-          @click="markAllAsRead()"
-          label="Mark all as read"                
-        />   
+    <q-separator class="q-my-sm"/>
+    <div class="tw-flex tw-justify-end q-px-sm q-my-md">
+      <mark-all-as-read
+        @marked="() => {notifications = []; getData()}"
+      />
     </div>    
-    <!--Notifications-->
-    
+    <!--Notifications-->    
       <!--Notifications List-->
-      <div v-for="notification in notificationsData" :key="notification.id" class="q-px-sm">        
+      <div v-for="notification in notificationsData" :key="notification.id">
         <notification-card
           :notification="notification"
           :icon="getIcon(notification)"
-          :icon-color="getIconColor(notification)"            
+          :icon-color="getIconColor(notification)"
+          :small-icon="true"
         />
       </div>
       <!--Actions-->
-      <div class="text-center q-py-md" v-if="(this.pagination.page == this.pagination.lastPage) ? false : true">
+      <div class="text-center q-py-md" v-if="(this.pagination.page == this.pagination.lastPage) ? false : true" v-show="!loading">
         <!--Load more notifications-->
         <q-btn unelevated color="green" rounded no-caps :label="$trp('isite.cms.label.showMore')" @click="gotoNotifications()"/>
       </div>
@@ -51,13 +42,16 @@
 <script>
 import baseService from '@imagina/qcrud/_services/baseService'
 import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
+import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
+
 export default {
   beforeDestroy() {
     this.$eventBus.$off('inotification.notifications.new')
   },
   props: {},
   components: {
-    notificationCard
+    notificationCard, 
+    markAllAsRead
   },
   mounted() {
     this.$nextTick(function () {
@@ -76,7 +70,7 @@ export default {
         opacity: 0.1
       },
       pagination: {
-        page: 0,
+        page: 1,
         perPage: 6,
         lastPage: -1
       },
@@ -169,7 +163,7 @@ export default {
           refresh: true,
           params: {
             take: this.pagination.perPage,
-            page: (this.pagination.page + 1),
+            page: this.pagination.page,
             filter: {
               me: true,
               type: 'broadcast'
@@ -192,9 +186,7 @@ export default {
     },
 
     gotoNotifications(){
-      if(this.$route.name == 'notification.admin.notificationIndex'){
-        //this.$emit('toggleMasterDrawer', 'notification')
-      } else {
+      if(this.$route.name != 'notification.admin.notificationIndex'){
         this.$router.push({name: 'notification.admin.notificationIndex'})
       } 
     },
@@ -232,28 +224,7 @@ export default {
           })
         })
       })
-    },    
-
-
-
-    /*
-    //Notification Action
-    handlerActon(notification) {
-      //Set as readed
-      if (!notification.isRead) {
-        //Request
-        this.$crud.update('apiRoutes.qnotification.markRead', notification.id, {})
-        //Change local data
-        let notificationIndex = this.notifications.findIndex(item => item.id == notification.id)
-        this.notifications[notificationIndex].isRead = true
-      }
-      //Go to link
-      if (notification.link) this.$helper.openExternalURL(notification.link, true)//open expernal URL
-    },
-    */
-   /* source*/
-   
-   
+    },   
   }
 }
 </script>
