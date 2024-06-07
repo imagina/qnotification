@@ -7,61 +7,58 @@
         <q-icon name="fas fa-bell" color="primary" size="20px" class="q-mr-sm"/>
         <label>{{ $tr('isite.cms.label.notification', {capitalize: true}) }}</label>
       </div>
+      
       <!-- Close icon -->
       <q-icon name="fas fa-times" color="blue-grey" size="20px" class="cursor-pointer"
               @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"/>
     </div>
     <!--Separator-->
     <q-separator class="q-my-md"/>
+    <div class="tw-flex tw-justify-end">
+      <q-btn
+        v-if="false"
+          rounded
+          dense
+          unelevated
+          no-caps 
+          text-color="primary"
+          size="md"
+          style="border: 1px solid rgba(0, 13, 71, 0.15)"
+          @click="markAllAsRead()"
+          label="Mark all as read"                
+        />   
+    </div>    
     <!--Notifications-->
-    <q-scroll-area :thumb-style="thumbStyle" v-if="notificationsData.length" class="relative-position"
-                   style="height: calc(100vh - 93px); width: 100%">
+    
       <!--Notifications List-->
-      <div v-for="notification in notificationsData" :key="notification.id" @click="handlerActon(notification)"
-           :class="`item ${notification.link ? 'cursor-pointer' : ''}`">
-        <!--Content Notification-->
-        <div class="relative-position q-pl-xl">
-          <div class="row items-center q-pl-sm">
-            <!--Bagde is read-->
-            <q-badge v-if="!notification.isRead" :color="notification.isImportant ? 'orange' : 'primary'"
-                     rounded floating/>
-            <!--Icon-->
-            <q-icon color="green" class="icon-item" :name="notification.icon"/>
-            <!--Content-->
-            <div class="text-item row items-center">
-              <!--Message-->
-              <div class="ellipsis-3-lines q-pr-xs text-grey-8">
-                <div v-html="notification.message"></div>
-                <q-tooltip :delay="1000" max-width="250px">
-                  <label v-html="notification.message"></label>
-                </q-tooltip>
-              </div>
-              <!--Date-->
-              <div class="col-12 text-grey-6 text-caption">
-                {{ $date.getHumanCalendar(notification.createdAt) }}
-              </div>
-            </div>
-          </div>
-        </div>
+      <div v-for="notification in notificationsData" :key="notification.id" class="q-px-sm">        
+        <notification-card
+          :notification="notification"
+          :icon="getIcon(notification)"
+          :icon-color="getIconColor(notification)"            
+        />
       </div>
       <!--Actions-->
       <div class="text-center q-py-md" v-if="(this.pagination.page == this.pagination.lastPage) ? false : true">
         <!--Load more notifications-->
-        <q-btn unelevated color="green" rounded no-caps :label="$trp('isite.cms.label.showMore')" @click="getData()"/>
+        <q-btn unelevated color="green" rounded no-caps :label="$trp('isite.cms.label.showMore')" @click="gotoNotifications()"/>
       </div>
       <!--Inner loading-->
-      <inner-loading :visible="loading"/>
-    </q-scroll-area>
+      <inner-loading :visible="loading"/>    
   </div>
 </template>
 
 <script>
+import baseService from '@imagina/qcrud/_services/baseService'
+import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
 export default {
   beforeDestroy() {
     this.$eventBus.$off('inotification.notifications.new')
   },
   props: {},
-  components: {},
+  components: {
+    notificationCard
+  },
   mounted() {
     this.$nextTick(function () {
       this.init()
@@ -80,9 +77,10 @@ export default {
       },
       pagination: {
         page: 0,
-        perPage: 15,
+        perPage: 6,
         lastPage: -1
       },
+      sourceSettings: null
     }
   },
   computed: {
@@ -137,8 +135,9 @@ export default {
     }
   },
   methods: {
-    init() {
+    async init() {
       this.listenEvents()
+      await this.getSources()
       this.getData()
     },
     //Listen events
@@ -191,6 +190,53 @@ export default {
         })
       })
     },
+
+    gotoNotifications(){
+      if(this.$route.name == 'notification.admin.notificationIndex'){
+        //this.$emit('toggleMasterDrawer', 'notification')
+      } else {
+        this.$router.push({name: 'notification.admin.notificationIndex'})
+      } 
+    },
+
+    getIcon(notification){
+      return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].icon : 'fa-light fa-bell'
+    },
+
+    getIconColor(notification){
+      return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].color : '#2196f3'
+    },
+
+    getSources(){
+      return new Promise((resolve, reject) => {
+        this.loading = true
+        //Request Params
+        let requestParams = {
+          refresh: true,
+          params: {filter: {allTranslations: true, configNameByModule: 'config.notificationSource'}}
+        }
+        //Request
+        baseService.index('apiRoutes.qsite.configs', requestParams).then(response => {
+          for (const [key, value] of Object.entries(response.data)) {
+            if(value != null){
+              this.sourceSettings = {...this.sourceSettings, ...response.data[key]}
+            }
+          }          
+          
+          this.loading = false
+          resolve(true)
+        }).catch(error => {
+          this.loading = false
+          this.$apiResponse.handleError(error, () => {
+            resolve(error)
+          })
+        })
+      })
+    },    
+
+
+
+    /*
     //Notification Action
     handlerActon(notification) {
       //Set as readed
@@ -204,6 +250,10 @@ export default {
       //Go to link
       if (notification.link) this.$helper.openExternalURL(notification.link, true)//open expernal URL
     },
+    */
+   /* source*/
+   
+   
   }
 }
 </script>

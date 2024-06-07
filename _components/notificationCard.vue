@@ -1,5 +1,6 @@
 <template>
-  <q-item v-ripple dense>
+  <div>
+  <q-item v-ripple dense class="no-margin no-padding">
     <q-item-section avatar top>
       <div class="flex flex-center notifications-notification-icon" :style="{borderColor: iconColor }">
         <q-icon :name="icon" :style="{color: iconColor, fontSize: '24px' }" />
@@ -8,9 +9,9 @@
 
     <q-item-section top>
       <q-item-label lines="1">
-        <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
+        <span class="text-weight-medium text-weight-bold">{{ notification.id}} {{notification.title}}</span>                    
       </q-item-label>
-      <q-item-label>
+      <q-item-label lines="2">
         <div class="text-body2" v-html="notification.message">
         </div>
       </q-item-label>
@@ -38,8 +39,10 @@
           label="Mark as read"
         />
       </div>
-    </q-item-section>
-  </q-item>  
+    </q-item-section>    
+  </q-item>
+  <q-separator :spaced="'12px'" />
+  </div>
 </template>
 <script>
 //Components

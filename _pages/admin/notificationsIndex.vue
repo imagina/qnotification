@@ -58,7 +58,6 @@
               :icon="getIcon(notification)"
               :icon-color="getIconColor(notification)"            
             />
-            <q-separator spaced inset />
           </div>
           <div class="q-pa-xl flex flex-center">
           <!--pagination -->
