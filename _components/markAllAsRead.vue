@@ -32,9 +32,6 @@
     methods: {
       markAllAsRead(){
         this.loading = true
-        this.$emit('marked')
-        this.loading = false
-        return     
         return new Promise((resolve, reject) => {        
           baseService.put('apiRoutes.qnotification.markAllAsRead', {}).then(response => {
             this.loading = false

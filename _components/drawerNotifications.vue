@@ -21,7 +21,7 @@
     </div>    
     <!--Notifications-->    
       <!--Notifications List-->
-      <div v-for="notification in notificationsData" :key="notification.id">
+      <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
         <notification-card
           :notification="notification"
           :icon="getIcon(notification)"
@@ -130,6 +130,7 @@ export default {
   },
   methods: {
     async init() {
+      console.log('init')
       this.listenEvents()
       await this.getSources()
       this.getData()

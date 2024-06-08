@@ -124,7 +124,8 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
             props: {
               label: 'Source',
               clearable: true,
-              options: []
+              options: [],
+              vIf: false
             },
           },
           date: {
@@ -206,6 +207,9 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
             //add source filter options
             for (const [key, value] of Object.entries(this.sourceSettings)) {
               this.formFields.source.props.options.push({label: this.sourceSettings[key]['label'], value: key})
+            }
+            if(this.formFields.source.props.options.length > 0){
+              this.formFields.source.props.vIf = true
             }
             this.loading = false
             resolve(true)

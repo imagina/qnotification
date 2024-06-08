@@ -1,6 +1,6 @@
 <template>
   <div>
-  <q-item clickable v-ripple dense class="no-margin q-py-none q-pl-none" @click="dialog=true">
+  <q-item clickable v-ripple dense class="no-margin q-py-none q-pl-none" @click="openNotification()">
     <q-item-section avatar>
       <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: iconColor }">
         <q-icon :name="icon" :style="{color: iconColor, fontSize: '20px' }" />
@@ -38,7 +38,7 @@
           unelevated
           no-caps                   
           size="md"                  
-          @click="markAsRead(notification)"
+          @click="markAsRead()"
           label="Mark as read"
         />
       </div>
@@ -144,15 +144,16 @@ import baseService from '@imagina/qcrud/_services/baseService'
 
       async init(){        
       },      
-      markAsRead(notification){
+      markAsRead(){
+        this.notification.isRead = true
         return new Promise((resolve, reject) => {        
-          baseService.update('apiRoutes.qnotification.markRead', notification.id, {}).then(response => {            
+          baseService.update('apiRoutes.qnotification.markRead', this.notification.id, {}).then(response => {            
             //let notificationIndex = this.notifications.findIndex(item => item.id == notification.id)
-            //this.notifications[notificationIndex].isRead = true
-            this.notification.isRead = true
+            //this.notifications[notificationIndex].isRead = true            
             resolve(this.notification)
           }).catch(error => {
             this.$apiResponse.handleError(error, () => {
+              this.notification.isRead = false
               this.loading = false
             })
           })
@@ -160,6 +161,12 @@ import baseService from '@imagina/qcrud/_services/baseService'
       },
       goToLink(){
         this.$helper.openExternalURL(this.notification.link, true)//open expernal URL
+      }, 
+      openNotification(){
+        this.dialog = true;
+        if(this.notification.isRead == false){
+          this.markAsRead()
+        }
       }
     },
   }
