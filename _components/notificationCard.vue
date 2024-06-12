@@ -63,8 +63,8 @@
         <!--notification-->
         <q-item class="no-margin no-padding">
           <q-item-section avatar top>
-            <div class="flex flex-center notification-notification-icon" :style="{borderColor: iconColor }">
-              <q-icon :name="icon" :style="{color: iconColor, fontSize: '32px' }" />
+            <div class="flex flex-center notification-notification-icon-big" :style="{borderColor: iconColor }">
+              <q-icon :name="icon" :style="{color: iconColor, fontSize: '48px' }" />
             </div>
           </q-item-section>                
 
@@ -93,7 +93,6 @@
         </div>        
       </q-card-section>
     <q-card-section>
-      <q-separator class="q-my-sm"/>
       <q-card-actions align="right" v-if="notification.link">
         <q-btn 
           label="Cancel"
@@ -102,13 +101,15 @@
           unelevated
           color="grey"          
           @click="closeModal()"
+          class="q-px-sm"
         />
         <q-btn
           rounded
           no-caps
           unelevated
           color="green"          
-          @click="goToLink()"            
+          @click="goToLink()"
+          class="q-px-sm"
         >
           <span>
             Open link
@@ -197,6 +198,15 @@ import baseService from '@imagina/qcrud/_services/baseService'
   }
   </script>
   <style lang="stylus">
+    
+    .notification-notification-icon-big {
+      border-radius: 8px;
+      width: 64px;
+      height: 64px;
+      border: 2px;
+      border-style: solid;
+    }
+  
     .notification-notification-icon {
       border-radius: 8px;
       width: 48px;
