@@ -3,10 +3,9 @@
     rounded
     dense
     unelevated
-    no-caps 
-    text-color="primary"
+    no-caps
     size="md"
-    style="border: 1px solid rgba(0, 13, 71, 0.15)"
+    class="notification-mark-all-as-read"
     @click="markAllAsRead()"
     label="Mark all as read"
     :loading="loading"
@@ -47,6 +46,13 @@
     }
   }
   </script>
-  <style lang="stylus">
+  <style lang="stylus">  
+    .notification-mark-all-as-read {
+      border: 1px solid rgba(0, 13, 71, 0)     
+    }
+
+    .notification-mark-all-as-read:hover {
+      border: 1px solid rgba(0, 13, 71, 0.15)
+    }
   </style>
   

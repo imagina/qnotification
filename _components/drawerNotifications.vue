@@ -2,19 +2,46 @@
   <!--Content notifications-->
   <div id="drawerNotificationsComponent">
     <!-- ===== Header ===== -->
-    <div class="row justify-between items-center q-pr-md">
-      <div class="text-subtitle1 row items-center">
-        <q-icon name="fas fa-bell" color="primary" size="20px" class="q-mr-sm"/>
-        <label>{{ $tr('isite.cms.label.notification', {capitalize: true}) }}</label>
+    <div class="row justify-between items-center">
+      <div class="col-6">
+        <q-icon name="fa-light fa-bell" color="blue-grey" size="20px" class="q-mr-sm" v-if="true"/>
+        <label class="text-subtitle1">{{ $tr('isite.cms.label.notification', {capitalize: true}) }}</label>
       </div>
-      
-      <!-- Close icon -->
-      <q-icon name="fas fa-times" color="blue-grey" size="20px" class="cursor-pointer"
-              @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"/>
+      <div class="col-6">
+        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">
+          <!-- Go to notifications -->
+          <q-btn
+            unelevated
+            rounded
+            dense
+            @click="gotoNotifications()"
+          >
+            <q-icon
+                name="fa-light fa-arrow-up-right-from-square"
+                color="blue-grey"
+                size="20px" 
+                class="cursor-pointer"
+            />
+          </q-btn>
+          <!-- Close icon -->
+          <q-btn
+            unelevated
+            rounded
+            dense
+            @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"
+          >
+            <q-icon 
+              name="fa-light fa-times" 
+              color="blue-grey" 
+              size="20px" 
+              class="cursor-pointer"
+            />
+          </q-btn>
+        </div>
+      </div>
     </div>
-    <!--Separator-->
-    <q-separator class="q-my-sm"/>
-    <div class="tw-flex tw-justify-end q-px-sm q-my-md">
+    <!--Separator-->    
+    <div class="tw-flex tw-justify-end q-my-md">
       <mark-all-as-read
         @marked="() => {notifications = []; getData()}"
       />
@@ -26,13 +53,9 @@
           :notification="notification"
           :icon="getIcon(notification)"
           :icon-color="getIconColor(notification)"
-          :small-icon="true"
+          :small-icon="true"          
         />
-      </div>
-      <!--Actions-->
-      <div class="text-center q-py-md" v-if="(this.pagination.page == this.pagination.lastPage) ? false : true" v-show="!loading">
-        <!--Load more notifications-->
-        <q-btn unelevated color="green" rounded no-caps :label="$trp('isite.cms.label.showMore')" @click="gotoNotifications()"/>
+        <q-separator :spaced="'10px'" v-if="!lastItem(notification)"/>
       </div>
       <!--Inner loading-->
       <inner-loading :visible="loading"/>    
@@ -126,7 +149,7 @@ export default {
 
       //Response
       return response
-    }
+    },
   },
   methods: {
     async init() {
@@ -225,35 +248,25 @@ export default {
           })
         })
       })
-    },   
+    }, 
+    lastItem(notification){
+      const last = this.notifications[this.notifications.length - 1]
+      return last.id == notification.id
+    }  
   }
 }
 </script>
 <style lang="stylus">
 #drawerNotificationsComponent
-  padding 16px 0 16px 16px
-  height 100%
-
-  .item
-    font-size 13px
-    border-radius 5px
-    padding 8px 8px 8px 0
-    margin-right 8px
-
-    &:hover
-      background-color #f7f6f6
-
-    .text-item
-      min-height 60px
-      line-height 1.2
-      max-width 190px
-
-    .icon-item
-      font-size 23px
-      width 50px
-      height 50px
-      background-color #EEEEEE
-      position absolute
-      left 0
-      border-radius 50%
+  background-color: rgb(255, 255, 255);
+  border: 2px solid #e2e2e2;
+  border-radius: 8px;
+  height: auto;
+  margin-top: 50px;
+  margin-right: 10px
+  padding 20px;
+  position: fixed;
+  right: 0;
+  width: 300px;
+  z-index: 99999;  
 </style>

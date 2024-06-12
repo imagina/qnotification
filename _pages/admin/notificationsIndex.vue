@@ -42,29 +42,33 @@
       <!-- notifications-->
       <div class="row q-pa-md">
         <div class="col-12" v-if="notifications.length > 0">
-          <div v-for="(notification, index) in notifications" :key="index">
-            <notification-card
-              :notification="notification"
-              :icon="getIcon(notification)"
-              :icon-color="getIconColor(notification)"            
+          <div style="min-height: 100px">
+            <div v-for="(notification, index) in notifications" :key="index">
+              <notification-card
+                :notification="notification"
+                :icon="getIcon(notification)"
+                :icon-color="getIconColor(notification)"
+                @read="removeFromUnread(notification)"
+              />
+              <q-separator :spaced="'10px'"/>
+            </div>
+          </div>
+          <div class="q-pa-lg flex flex-center">
+            <!--pagination -->
+            <q-pagination
+              v-model="pagination.currentPage"            
+              v-show="pagination.lastPage > 1 && !loading"
+              :max="pagination.lastPage"
+              :max-pages="6"
+              :ellipses="false"
+              :boundary-numbers="false"
+              unelevated
+              round
+              color="blue-grey"
+              active-color="primary"
+              direction-links
             />
           </div>
-          <div class="q-pa-xl flex flex-center">
-          <!--pagination -->
-          <q-pagination
-            v-model="pagination.currentPage"            
-            v-show="pagination.lastPage > 1 && !loading"
-            :max="pagination.lastPage"
-            :max-pages="6"
-            :ellipses="false"
-            :boundary-numbers="false"
-            unelevated
-            round
-            color="blue-grey"
-            active-color="primary"
-            direction-links
-          />
-      </div>
         </div>
         <div class="col-12" v-else>
           <div class="tw-h-64 tw-content-center tw-justify-center"  >          
@@ -72,8 +76,6 @@
           </div>
         </div>
       </div>
-      
-      
       <inner-loading :visible="loading"/>      
   </q-page>
   </template>
@@ -280,20 +282,17 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
           })
         })
       },
-      markAsRead(notification){
-        return new Promise((resolve, reject) => {        
-          baseService.update('apiRoutes.qnotification.markRead', notification.id, {}).then(response => {            
-            let notificationIndex = this.notifications.findIndex(item => item.id == notification.id)
-            this.notifications[notificationIndex].isRead = true
-            resolve(this.notifications[notificationIndex])
-          }).catch(error => {
-            this.$apiResponse.handleError(error, () => {
-              this.loading = false
-            })
+      removeFromUnread(notification){
+        if(this.filters.tab == this.tabs[2].name){ //unread tab
+          this.notifications = this.notifications.filter((e) => {
+            return e.id !== notification.id
           })
-        })
-      },
-      
+        }
+
+        if(this.notifications.length == 0){
+          this.getNotifications()
+        }
+      }
     }
   }
   </script>

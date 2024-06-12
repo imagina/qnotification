@@ -1,6 +1,6 @@
 <template>
   <div>
-  <q-item clickable v-ripple dense class="no-margin q-py-none q-pl-none" @click="openNotification()">
+  <q-item clickable dense class="no-margin q-py-none q-pl-none" @click="openModal()">
     <q-item-section avatar>
       <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: iconColor }">
         <q-icon :name="icon" :style="{color: iconColor, fontSize: '20px' }" />
@@ -31,36 +31,33 @@
       <div>
         <q-badge color="blue" rounded />                  
       </div>
-      <div class="tw-flex-1 tw-content-end">
+      <div class="tw-flex-1 tw-content-end q-pa-sm">
         <q-btn
+          class="notification-mark-as-read"
           rounded
           dense
           unelevated
           no-caps                   
           size="md"                  
-          @click="markAsRead()"
+          @click.stop="markAsReadHandler()"
           label="Mark as read"
+          :loading="loading"
         />
       </div>
     </q-item-section>    
   </q-item>
-  <q-separator :spaced="'10px'" />
-
-<!-- dialog ------->
+<!------ dialog ------->
   <q-dialog v-model="dialog">
-    <q-card style="width: 600px;">
+    <q-card rounded style="width: 600px;">
       <q-card-section>
         <div class="row justify-between items-center">
           <div class="text-subtitle1 row items-center">
-            <q-icon name="fas fa-bell" color="primary" size="20px" class="q-mr-sm"/>
+            <q-icon name="fa-light fa-bell" color="blue-grey" size="20px" class="q-mr-sm"/>
             <label>{{ $tr('isite.cms.label.notification', {capitalize: true}) }}</label>
           </div>
           <!-- Close icon -->
-          <q-icon name="fas fa-times" color="blue-grey" size="23px" class="cursor-pointer"
-                  @click="dialog=false"/>
+          <q-icon name="fas fa-times" color="blue-grey" size="23px" class="cursor-pointer"  @click="closeModal()"/>
         </div>
-        <!--Separator-->
-        <q-separator class="q-my-sm"/>
       </q-card-section>
       <q-card-section>
         <!--notification-->
@@ -98,17 +95,16 @@
     <q-card-section>
       <q-separator class="q-my-sm"/>
       <q-card-actions align="right" v-if="notification.link">
-          <q-btn 
-            label="Open link"
-            rounded
-            no-caps
-            unelevated
-            color="green"
-            @click="goToLink()"
-          />
+        <q-btn 
+          label="Open link"
+          rounded
+          no-caps
+          unelevated
+          color="green"          
+          @click="goToLink()"            
+        />
       </q-card-actions>
     </q-card-section>
-
     </q-card>
   </q-dialog>
   </div>
@@ -132,7 +128,8 @@ import baseService from '@imagina/qcrud/_services/baseService'
     },
     data() {
       return {
-        dialog: false
+        dialog: false, 
+        loading: false,
       }        
     },
     computed: {
@@ -143,13 +140,11 @@ import baseService from '@imagina/qcrud/_services/baseService'
     methods: {
 
       async init(){        
-      },      
-      markAsRead(){
+      },
+      markAsRead(){        
         this.notification.isRead = true
         return new Promise((resolve, reject) => {        
           baseService.update('apiRoutes.qnotification.markRead', this.notification.id, {}).then(response => {            
-            //let notificationIndex = this.notifications.findIndex(item => item.id == notification.id)
-            //this.notifications[notificationIndex].isRead = true            
             resolve(this.notification)
           }).catch(error => {
             this.$apiResponse.handleError(error, () => {
@@ -162,11 +157,24 @@ import baseService from '@imagina/qcrud/_services/baseService'
       goToLink(){
         this.$helper.openExternalURL(this.notification.link, true)//open expernal URL
       }, 
-      openNotification(){
+      openModal(){
         this.dialog = true;
         if(this.notification.isRead == false){
+          this.notification.isRead = true          
           this.markAsRead()
         }
+      }, 
+      closeModal(){
+        this.dialog = false
+        this.$emit('read')
+      },
+      markAsReadHandler(){
+        this.loading = true
+        this.markAsRead().then(() => {
+          this.notification.isRead = true
+          this.loading = false  
+          this.$emit('read')
+        })        
       }
     },
   }
@@ -189,9 +197,19 @@ import baseService from '@imagina/qcrud/_services/baseService'
     }
 
     .notification-notification-image {
-      height 250px
-      width 100%
-      border-radius 0
+      height 250px;
+      width 100%;
+      border-radius 16px;
+    }
+
+    .notification-mark-as-read {
+      color: rgb(117, 117, 117);
+      border: 1px solid rgba(0, 13, 71, 0);
+    }
+
+    .notification-mark-as-read:hover {
+      color: rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(0, 13, 71, 0.15);
     }
   </style>
   
