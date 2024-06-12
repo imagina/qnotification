@@ -56,7 +56,7 @@
             <label>{{ $tr('isite.cms.label.notification', {capitalize: true}) }}</label>
           </div>
           <!-- Close icon -->
-          <q-icon name="fas fa-times" color="blue-grey" size="23px" class="cursor-pointer"  @click="closeModal()"/>
+          <q-icon name="fa-light fa-times" color="blue-grey" size="23px" class="cursor-pointer"  @click="closeModal()"/>
         </div>
       </q-card-section>
       <q-card-section>
@@ -96,13 +96,30 @@
       <q-separator class="q-my-sm"/>
       <q-card-actions align="right" v-if="notification.link">
         <q-btn 
-          label="Open link"
+          label="Cancel"
+          rounded
+          no-caps
+          unelevated
+          color="grey"          
+          @click="closeModal()"
+        />
+        <q-btn
           rounded
           no-caps
           unelevated
           color="green"          
           @click="goToLink()"            
-        />
+        >
+          <span>
+            Open link
+          </span>
+          <q-icon
+            name="fa-light fa-arrow-up-right-from-square"            
+            color="white"
+            size="14px"
+            class="cursor-pointer q-ml-sm"
+          />
+        </q-btn>
       </q-card-actions>
     </q-card-section>
     </q-card>
