@@ -26,15 +26,17 @@
           </q-tabs>
         </div>
         <!--filters-->
-        <div class="col-xs-12 col-sm-9 col-md-6">
+        <div class="col-xs-12 col-sm-9 col-md-6 q-mt-md">
           <div class="row q-col-gutter-x-sm">
             <dynamic-field v-for="(field, keyField) in formFields" :key="keyField" :field="field"
                                       v-model="filters[keyField]" class="col-xs-6 col-md-3 "/> 
 
             <div class="col-xs-6 col-md-3">
+              <div class="tw-text-center">
               <mark-all-as-read
                 @marked="resetPagination()" 
               />
+              </div>
             </div>
           </div>
         </div>
@@ -71,7 +73,7 @@
           </div>
         </div>
         <div class="col-12" v-else>
-          <div class="tw-h-64 tw-content-center tw-justify-center"  >          
+          <div class="tw-h-64 tw-content-center tw-justify-center">
             <not-result v-if="!loading"/>
           </div>
         </div>

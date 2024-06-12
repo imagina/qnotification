@@ -10,7 +10,7 @@
     label="Mark all as read"
     :loading="loading"
   />
-  </template>
+</template>
   
   <script>
   import baseService from '@imagina/qcrud/_services/baseService'  
