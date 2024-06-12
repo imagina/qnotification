@@ -1,6 +1,9 @@
 <template>
   <!--Content notifications-->
-  <div id="drawerNotificationsComponent">
+  <div 
+    id="drawerNotificationsComponent"
+    :style="marginStyle"
+    >
     <!-- ===== Header ===== -->
     <div class="row justify-between items-center">
       <div class="col-6">
@@ -71,7 +74,9 @@ export default {
   beforeDestroy() {
     this.$eventBus.$off('inotification.notifications.new')
   },
-  props: {},
+  props: {
+    isMobile: false
+  },
   components: {
     notificationCard, 
     markAllAsRead
@@ -101,6 +106,9 @@ export default {
     }
   },
   computed: {
+    marginStyle() {
+      return this.isMobile ? 'margin: 0px' : 'margin: 50px 10px 0px 0px'
+    },
     //Items transformed
     notificationsData() {
       //Default response
@@ -262,11 +270,10 @@ export default {
   border: 2px solid #e2e2e2;
   border-radius: 8px;
   height: auto;
-  margin-top: 50px;
-  margin-right: 10px
   padding 20px;
   position: fixed;
+  top: 0;
   right: 0;
   width: 300px;
-  z-index: 99999;  
+  z-index: 2000;
 </style>
