@@ -7,6 +7,7 @@ export default {
   version: moduleVersion,
   notifications : `${urlBase}/notifications`,
   markRead : `${urlBase}/notifications/mark-read`,
+  markAllAsRead:  `${urlBase}/notifications/mark-all-as-read`,
   providers : `${urlBase}/providers`,
   rules : `${urlBase}/rules`,
   rulesConfig : `${urlBase}/rules/config`
