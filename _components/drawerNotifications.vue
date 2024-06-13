@@ -2,7 +2,7 @@
   <!--Content notifications-->
   <div 
     id="drawerNotificationsComponent"
-    :style="marginStyle"
+    :style="style"
     >
     <!-- ===== Header ===== -->
     <div class="row justify-between items-center">
@@ -46,6 +46,7 @@
     <q-separator :spaced="'10px'"/>
     <div class="tw-flex tw-justify-end q-my-md">
       <mark-all-as-read
+        v-show="!loading"
         @marked="() => {notifications = []; getData()}"
       />
     </div>    
@@ -56,7 +57,7 @@
           :notification="notification"
           :icon="getIcon(notification)"
           :icon-color="getIconColor(notification)"
-          :small-icon="true"          
+          :small-icon="true"
         />
         <q-separator :spaced="'10px'" v-if="!lastItem(notification)"/>
       </div>
@@ -92,15 +93,15 @@ export default {
       notifications: [],
       pagination: {
         page: 1,
-        perPage: 6,
+        perPage: 5,
         lastPage: -1
       },
       sourceSettings: null
     }
   },
   computed: {
-    marginStyle() {
-      return this.isMobile ? 'margin: 0px' : 'margin: 50px 10px 0px 0px'
+    style() {
+      return this.isMobile ? 'margin: 0px;width:320px' : 'margin: 50px 10px 0px 0px;width:420px'
     },
     //Items transformed
     notificationsData() {
@@ -266,6 +267,5 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
-  z-index: 2000;
+  z-index 2000;
 </style>

@@ -155,7 +155,7 @@ import baseService from '@imagina/qcrud/_services/baseService'
     },
     computed: {
       isUnread(){
-        return this.notification.isRead
+        return !this.notification.isRead
       },
       imageUrl(){
         return this.notification?.mediaFiles?.mainimage?.id ? this.notification?.mediaFiles?.mainimage?.mediumThumb : false
