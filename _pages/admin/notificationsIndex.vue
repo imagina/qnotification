@@ -84,8 +84,8 @@
 <script>
 //Components
 import baseService from '@imagina/qcrud/_services/baseService'
-import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
-import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
+import notificationCard from '@imagina/qsite/_components/master/notifications/components/notificationCard.vue'
+import markAllAsRead from '@imagina/qsite/_components/master/notifications/components/markAllAsRead.vue'
   export default {
     props: {},
     components: {

@@ -68,8 +68,8 @@
 
 <script>
 import baseService from '@imagina/qcrud/_services/baseService'
-import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
-import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
+import notificationCard from '@imagina/qsite/_components/master/notifications/components/notificationCard.vue'
+import markAllAsRead from '@imagina/qsite/_components/master/notifications/components/markAllAsRead.vue'
 
 export default {
   beforeDestroy() {
@@ -257,15 +257,16 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
-#drawerNotificationsComponent
-  background-color: rgb(255, 255, 255);
-  border: 2px solid #e2e2e2;
-  border-radius: 8px;
-  height: auto;
-  padding 20px;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index 2000;
+<style scoped>
+  #drawerNotificationsComponent {
+    background-color: rgb(255, 255, 255);
+    border: 2px solid #e2e2e2;
+    border-radius: 8px;
+    height: auto;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 2000;
+  }
 </style>
