@@ -1,6 +1,6 @@
 <template>
   <div>
-  <q-item clickable dense class="no-margin q-py-none q-pl-none" @click="openModal()">
+  <q-item clickable dense class="no-margin no-padding" @click="openModal()">
     <q-item-section avatar>
       <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: iconColor }">
         <q-icon :name="icon" :style="{color: iconColor, fontSize: '20px' }" />
@@ -18,7 +18,7 @@
         <div class="text-body2" v-html="notification.message">
         </div>
       </q-item-label>
-      <q-item-label lines="1">
+      <q-item-label caption>
         <span class="text-caption text-grey-8">{{ notification.timeAgo }}
           <q-tooltip anchor="bottom end" self="center right">
           {{ notification.createdAt }}
@@ -27,12 +27,15 @@
       </q-item-label>                  
     </q-item-section>
     <!-- unread notification -->
-    <q-item-section side top v-show="!notification.isRead">
-      <div>
-        <q-badge color="blue" rounded />                  
-      </div>
-      <div class="tw-flex-1 tw-content-end q-pa-sm">
+    <q-item-section side top>
+      <div class="notification-unread">
+        <q-badge 
+          v-if="isUnread"
+            :color="notification.isImportant ? 'orange' : 'blue'" 
+            rounded 
+        />      
         <q-btn
+          v-if="isUnread"
           class="notification-mark-as-read"
           rounded
           dense
@@ -151,11 +154,14 @@ import baseService from '@imagina/qcrud/_services/baseService'
       }        
     },
     computed: {
+      isUnread(){
+        return this.notification.isRead
+      },
       imageUrl(){
         return this.notification?.mediaFiles?.mainimage?.id ? this.notification?.mediaFiles?.mainimage?.mediumThumb : false
       }, 
       linkLabel(){
-        return this.notification?.options?.link?.label ? this.notification.options.link.label :  this.$tr('notification.cms.openLink')
+        return this.notification?.options?.linkLabel ? this.notification.options.linkLabel :  this.$tr('notification.cms.openLink')
       }
     },
     methods: {
@@ -240,6 +246,17 @@ import baseService from '@imagina/qcrud/_services/baseService'
     .notification-mark-as-read:hover {
       color: rgba(0, 0, 0, 0.8);
       border: 1px solid rgba(0, 13, 71, 0.15);
+    }
+
+    .notification-unread {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column;
+      align-content: flex-end;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 100%;
+      padding-bottom: 4px
     }
   </style>
   
