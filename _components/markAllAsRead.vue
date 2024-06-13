@@ -7,7 +7,7 @@
     size="md"
     class="notification-mark-all-as-read"
     @click="markAllAsRead()"
-    label="Mark all as read"
+    :label="$tr('notification.cms.markAllAsRead')"
     :loading="loading"
   />
 </template>
@@ -32,9 +32,9 @@
       markAllAsRead(){
         this.loading = true
         return new Promise((resolve, reject) => {        
-          baseService.put('apiRoutes.qnotification.markAllAsRead', {}).then(response => {
-            this.loading = false
+          baseService.put('apiRoutes.qnotification.markAllAsRead', {}).then(response => {            
             this.$emit('marked')
+            this.loading = false
             resolve(response)
           }).catch(error => {
             this.$apiResponse.handleError(error, () => {

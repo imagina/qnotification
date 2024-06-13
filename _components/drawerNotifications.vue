@@ -7,8 +7,7 @@
     <!-- ===== Header ===== -->
     <div class="row justify-between items-center">
       <div class="col-6">
-        <q-icon name="fa-light fa-bell" color="blue-grey" size="20px" class="q-mr-sm" v-if="true"/>
-        <label class="text-subtitle1">{{ $tr('isite.cms.label.notification', {capitalize: true}) }}</label>
+        <label class="text-subtitle1">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
       </div>
       <div class="col-6">
         <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">
@@ -44,6 +43,7 @@
       </div>
     </div>
     <!--Separator-->    
+    <q-separator :spaced="'10px'"/>
     <div class="tw-flex tw-justify-end q-my-md">
       <mark-all-as-read
         @marked="() => {notifications = []; getData()}"
@@ -90,13 +90,6 @@ export default {
     return {
       loading: false,
       notifications: [],
-      thumbStyle: {
-        right: '4px',
-        borderRadius: '5px',
-        backgroundColor: '$custom-accent-color',
-        width: '5px',
-        opacity: 0.1
-      },
       pagination: {
         page: 1,
         perPage: 6,
@@ -161,7 +154,6 @@ export default {
   },
   methods: {
     async init() {
-      console.log('init')
       this.listenEvents()
       await this.getSources()
       this.getData()

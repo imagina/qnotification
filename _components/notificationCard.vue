@@ -27,7 +27,7 @@
       </q-item-label>                  
     </q-item-section>
     <!-- unread notification -->
-    <q-item-section side top v-show="!notification.isRead">              
+    <q-item-section side top v-show="!notification.isRead">
       <div>
         <q-badge color="blue" rounded />                  
       </div>
@@ -40,7 +40,7 @@
           no-caps                   
           size="md"                  
           @click.stop="markAsReadHandler()"
-          label="Mark as read"
+          :label="$tr('notification.cms.markAsRead')"
           :loading="loading"
         />
       </div>
@@ -95,7 +95,7 @@
     <q-card-section>
       <q-card-actions align="right" v-if="notification.link">
         <q-btn 
-          label="Cancel"
+          :label="$tr('notification.cms.cancel')"
           rounded
           no-caps
           unelevated
@@ -112,7 +112,7 @@
           class="q-px-sm"
         >
           <span>
-            Open link
+            {{ linkLabel }}
           </span>
           <q-icon
             name="fa-light fa-arrow-up-right-from-square"            
@@ -153,6 +153,9 @@ import baseService from '@imagina/qcrud/_services/baseService'
     computed: {
       imageUrl(){
         return this.notification?.mediaFiles?.mainimage?.id ? this.notification?.mediaFiles?.mainimage?.mediumThumb : false
+      }, 
+      linkLabel(){
+        return this.notification?.options?.link?.label ? this.notification.options.link.label :  this.$tr('notification.cms.openLink')
       }
     },
     methods: {
