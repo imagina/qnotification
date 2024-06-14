@@ -275,13 +275,6 @@ import markAllAsRead from '@imagina/qsite/_components/master/notifications/compo
     }
   }
   </script>
-  <style lang="stylus">
-    .notifications-notification-icon {
-      border-radius: 8px;
-      width: 40px;
-      height: 40px;
-      border: 2px;
-      border-style: solid;
-    }
+  <style>
   </style>
   
