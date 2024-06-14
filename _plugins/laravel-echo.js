@@ -50,14 +50,12 @@ export default class echo {
   //Connect laravel echo
   async doConnection() {
     if (process.env.CLIENT && this.keys) {
-      //if (!window.location.href.includes("localhost")) {
-        this.echo = new Echo({
-          broadcaster: 'pusher',
-          key: this.keys.pusherAppKey,
-          cluster: this.keys.pusherAppCluster,
-          encrypted: this.keys.pusherAppEncrypted,
-        });
-      //}
+      this.echo = new Echo({
+        broadcaster: 'pusher',
+        key: this.keys.pusherAppKey,
+        cluster: this.keys.pusherAppCluster,
+        encrypted: this.keys.pusherAppEncrypted,
+      });
     }
   }
 
@@ -65,10 +63,11 @@ export default class echo {
   openChannel() {
     if (process.env.CLIENT && this.echo) {
       this.echo.leave('imagina.notifications')//Close channel
-      console.log("[NOTIFICATION] Channel 'imagina.notifications' was opened")
+      let channelName = 'imagina.notifications'
+      let eventName = `notification.new.${this.userId}`
       //Open channel
-      this.echo.channel('imagina.notifications')
-        .listen(`.notification.new.${this.userId}`, (response) => {
+      this.echo.channel(channelName)
+        .listen(`.${eventName}`, (response) => {
           //Bell notification
           if (!response.isAction) response.frontEvent = {...response, name: 'inotification.notifications.new'}
           //Custom event from backend
@@ -76,6 +75,14 @@ export default class echo {
             eventBus.$emit(response.frontEvent.name, response.frontEvent)
           }
         })
+      //Initialize the SW
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'initializePusher',
+          data: {...this.keys, channelName, eventName},
+        });
+      }
+      console.log("[NOTIFICATION] Channel 'imagina.notifications' was opened")
     }
   }
 }

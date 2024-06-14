@@ -34,7 +34,7 @@ export default class NotificationPlugin {
         if (result === 'granted') {
           navigator.serviceWorker.ready.then(registration => {
             registration.showNotification(params.title, {
-              body: params.body,
+              body: params.message || params.body,
               icon: params.icon,
               data: params.data || {}
             })
