@@ -48,8 +48,7 @@
             <div v-for="(notification, index) in notifications" :key="index">
               <notification-card
                 :notification="notification"
-                :icon="getIcon(notification)"
-                :icon-color="getIconColor(notification)"
+                :source-settings="sourceSettings"
                 @read="removeFromUnread(notification)"
               />
               <q-separator :spaced="'10px'"/>
@@ -83,7 +82,8 @@
   </template>
 <script>
 //Components
-import baseService from '@imagina/qcrud/_services/baseService'
+
+import services from '@imagina/qsite/_components/master/notifications/services'
 import notificationCard from '@imagina/qsite/_components/master/notifications/components/notificationCard.vue'
 import markAllAsRead from '@imagina/qsite/_components/master/notifications/components/markAllAsRead.vue'
   export default {
@@ -183,47 +183,24 @@ import markAllAsRead from '@imagina/qsite/_components/master/notifications/compo
       async init(){
         await this.getSources()
         await this.getNotifications()
-      },
-
-      getIcon(notification){
-        return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].icon : 'fa-light fa-bell'
-      },
-
-      getIconColor(notification){
-        return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].color : '#2196f3'
-      },
+      },      
 
       getSources(){
-        return new Promise((resolve, reject) => {
-          this.loading = true
-          //Request Params
-          let requestParams = {
-            refresh: true,
-            params: {filter: {allTranslations: true, configNameByModule: 'config.notificationSource'}}
-          }
-          //Request
-          baseService.index('apiRoutes.qsite.configs', requestParams).then(response => {
-            for (const [key, value] of Object.entries(response.data)) {
-              if(value != null){
-                this.sourceSettings = {...this.sourceSettings, ...response.data[key]}
-              }
-            }
-            //add source filter options
-            for (const [key, value] of Object.entries(this.sourceSettings)) {
-              this.formFields.source.props.options.push({label: this.sourceSettings[key]['label'], value: key})
-            }
-            if(this.formFields.source.props.options.length > 0){
-              this.formFields.source.props.vIf = true
-            }
-            this.loading = false
-            resolve(true)
-          }).catch(error => {
-            this.loading = false
-            this.$apiResponse.handleError(error, () => {
-              resolve(error)
-            })
-          })
+        this.loading = true
+        services.getSources().then( (sources) => {
+          this.sourceSettings = sources
+          this.addSourceFilterOptions()
         })
+      }, 
+
+      //add source filter options
+      addSourceFilterOptions(){
+        for (const [key, value] of Object.entries(this.sourceSettings)) {
+          this.formFields.source.props.options.push({label: this.sourceSettings[key]['label'], value: key})
+        }
+        if(this.formFields.source.props.options.length > 0){
+          this.formFields.source.props.vIf = true
+        }
       },
 
       async resetPagination(){
@@ -270,7 +247,7 @@ import markAllAsRead from '@imagina/qsite/_components/master/notifications/compo
         }
         
         return new Promise((resolve, reject) => {        
-          baseService.index('apiRoutes.qnotification.notifications', requestParams).then(response => {
+          services.getNotifications(requestParams).then(response => {
             this.loading = false
             this.pagination.lastPage = response.meta.page.lastPage
             this.pagination.total = response.meta.page.total

@@ -55,9 +55,8 @@
       <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
         <notification-card
           :notification="notification"
-          :icon="getIcon(notification)"
-          :icon-color="getIconColor(notification)"
           :small-icon="true"
+          :source-settings="sourceSettings"
         />
         <q-separator :spaced="'10px'" v-if="!lastItem(notification)"/>
       </div>
@@ -67,7 +66,7 @@
 </template>
 
 <script>
-import baseService from '@imagina/qcrud/_services/baseService'
+import services from '@imagina/qsite/_components/master/notifications/services'
 import notificationCard from '@imagina/qsite/_components/master/notifications/components/notificationCard.vue'
 import markAllAsRead from '@imagina/qsite/_components/master/notifications/components/markAllAsRead.vue'
 
@@ -196,7 +195,7 @@ export default {
           }
         }
         //get notifications
-        this.$crud.index('apiRoutes.qnotification.notifications', requestParams).then(response => {
+        services.getNotifications(requestParams).then(response => {
           this.notifications = [...this.notifications, ...response.data]
           this.pagination.lastPage = response.meta.page.lastPage
           this.pagination.page = response.meta.page.currentPage
@@ -216,38 +215,10 @@ export default {
       } 
     },
 
-    getIcon(notification){
-      return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].icon : 'fa-light fa-bell'
-    },
-
-    getIconColor(notification){
-      return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].color : '#2196f3'
-    },
-
     getSources(){
-      return new Promise((resolve, reject) => {
-        this.loading = true
-        //Request Params
-        let requestParams = {
-          refresh: true,
-          params: {filter: {allTranslations: true, configNameByModule: 'config.notificationSource'}}
-        }
-        //Request
-        baseService.index('apiRoutes.qsite.configs', requestParams).then(response => {
-          for (const [key, value] of Object.entries(response.data)) {
-            if(value != null){
-              this.sourceSettings = {...this.sourceSettings, ...response.data[key]}
-            }
-          }          
-          
-          this.loading = false
-          resolve(true)
-        }).catch(error => {
-          this.loading = false
-          this.$apiResponse.handleError(error, () => {
-            resolve(error)
-          })
-        })
+      this.loading = true
+      services.getSources().then( (sources) => {
+        this.sourceSettings = sources
       })
     }, 
     lastItem(notification){
