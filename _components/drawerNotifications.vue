@@ -10,21 +10,7 @@
         <label class="text-subtitle1">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
       </div>
       <div class="col-6">
-        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">
-          <!-- Go to notifications -->
-          <q-btn
-            unelevated
-            rounded
-            dense
-            @click="gotoNotifications()"
-          >
-            <q-icon
-                name="fa-light fa-arrow-up-right-from-square"
-                color="blue-grey"
-                size="20px" 
-                class="cursor-pointer"
-            />
-          </q-btn>
+        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">          
           <!-- Close icon -->
           <q-btn
             unelevated
@@ -44,12 +30,6 @@
     </div>
     <!--Separator-->    
     <q-separator :spaced="'10px'"/>
-    <div class="tw-flex tw-justify-end q-my-md">
-      <mark-all-as-read
-        v-show="!loading"
-        @marked="() => {notifications = []; getData()}"
-      />
-    </div>    
     <!--Notifications-->    
       <!--Notifications List-->
       <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
@@ -57,18 +37,29 @@
           :notification="notification"
           :small-icon="true"
           :source-settings="sourceSettings"
+          @read="markAsRead(notification)"
         />
         <q-separator :spaced="'10px'" v-if="!lastItem(notification)"/>
       </div>
+      <!-- Go to notifications -->
+      <q-btn
+        unelevated
+        rounded
+        dense
+        class="full-width"
+        @click="gotoNotifications()"
+        label="Ver todas"
+      />
+        
       <!--Inner loading-->
       <inner-loading :visible="loading"/>    
   </div>
 </template>
 
 <script>
-import services from '@imagina/qsite/_components/master/notifications/services'
-import notificationCard from '@imagina/qsite/_components/master/notifications/components/notificationCard.vue'
-import markAllAsRead from '@imagina/qsite/_components/master/notifications/components/markAllAsRead.vue'
+import services from '@imagina/qnotification/services'
+import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
+import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
 
 export default {
   beforeDestroy() {
@@ -224,7 +215,15 @@ export default {
     lastItem(notification){
       const last = this.notifications[this.notifications.length - 1]
       return last.id == notification.id
-    }  
+    }, 
+    markAsRead(notification){
+      this.notifications.find((e) => {
+        if(e.id == notification.id){
+          e.isRead = true
+        }
+      })
+    }
+
   }
 }
 </script>

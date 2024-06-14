@@ -48,6 +48,7 @@
             <div v-for="(notification, index) in notifications" :key="index">
               <notification-card
                 :notification="notification"
+                :show-mark-as-read="true"
                 :source-settings="sourceSettings"
                 @read="removeFromUnread(notification)"
               />
@@ -83,9 +84,9 @@
 <script>
 //Components
 
-import services from '@imagina/qsite/_components/master/notifications/services'
-import notificationCard from '@imagina/qsite/_components/master/notifications/components/notificationCard.vue'
-import markAllAsRead from '@imagina/qsite/_components/master/notifications/components/markAllAsRead.vue'
+import services from '@imagina/qnotification/services'
+import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
+import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
   export default {
     props: {},
     components: {
