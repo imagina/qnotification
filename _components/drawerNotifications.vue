@@ -5,11 +5,8 @@
     :style="style"
     >
     <!-- ===== Header ===== -->
-    <div class="row justify-between items-center">
-      <div class="col-6">
+    <div class="row col justify-between items-center">      
         <label class="text-subtitle1">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
-      </div>
-      <div class="col-6">
         <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">          
           <!-- Close icon -->
           <q-btn
@@ -26,7 +23,7 @@
             />
           </q-btn>
         </div>
-      </div>
+      
     </div>
     <!--Separator-->    
     <q-separator :spaced="'10px'"/>
@@ -39,18 +36,22 @@
           :source-settings="sourceSettings"
           @read="markAsRead(notification)"
         />
-        <q-separator :spaced="'10px'" v-if="!lastItem(notification)"/>
+        <q-separator v-if="!lastItem(notification)"/>
       </div>
       <!-- Go to notifications -->
       <q-btn
         unelevated
         rounded
         dense
-        class="full-width"
+        outline
+        class="full-width q-mt-md"
+        no-caps
+        color="white"
+        text-color="black"
         @click="gotoNotifications()"
         label="Ver todas"
+        v-if="!loading"
       />
-        
       <!--Inner loading-->
       <inner-loading :visible="loading"/>    
   </div>
@@ -91,7 +92,7 @@ export default {
   },
   computed: {
     style() {
-      return this.isMobile ? 'margin: 0px;width:320px' : 'margin: 50px 10px 0px 0px;width:420px'
+      return this.isMobile ? 'margin: 0px;' : 'margin: 50px 10px 0px 0px;'
     },
     //Items transformed
     notificationsData() {
@@ -232,11 +233,13 @@ export default {
     background-color: rgb(255, 255, 255);
     border: 2px solid #e2e2e2;
     border-radius: 8px;
+    min-height: 300px;
     height: auto;
     padding: 20px;
     position: fixed;
     top: 0;
     right: 0;
+    width: 320px;
     z-index: 2000;
   }
 </style>

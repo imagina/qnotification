@@ -1,6 +1,6 @@
 <template>
   <div>
-  <q-item clickable dense class="no-margin no-padding" @click="openModal()">
+  <q-item clickable dense class="q-my-sm q-px-none" @click="openModal()">
     <q-item-section avatar>
       <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: getIconColor }">
         <q-icon :name="getIcon" :style="{color: getIconColor, fontSize: '20px' }" />
@@ -13,7 +13,7 @@
       <q-item-label lines="1">
         <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
       </q-item-label>
-      <q-item-label lines="2">
+      <q-item-label lines="2" class="no-margin">
         <div class="text-body2" v-html="notification.message">
         </div>
       </q-item-label>

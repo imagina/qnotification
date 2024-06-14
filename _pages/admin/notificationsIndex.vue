@@ -22,7 +22,7 @@
             narrow-indicator
             style="align-items: center;"            
           >
-            <q-tab v-for="(tab, index) in tabs" :key="index" :name="tab.name"  :label="tab.label" />             
+            <q-tab v-for="(tab, index) in tabs" :key="index" :name="tab.value"  :label="tab.label" />             
           </q-tabs>
         </div>
         <!--filters-->
@@ -157,15 +157,15 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
         }, 
         tabs: [
           {
-            name: 'all', 
+            value: 'all',
             label: this.$tr('notification.cms.tab.all')
           }, 
           {
-            name: 'read', 
+            value: 'read', 
             label: this.$tr('notification.cms.tab.read')
           },
           {
-            name: 'unread', 
+            value: 'unread', 
             label: this.$tr('notification.cms.tab.unread')
           }
         ],
@@ -231,8 +231,8 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
           }
         }
         /* filters */
-        if(this.filters.tab != this.tabs[0].name){   //all        
-          requestParams.params.filter['isRead'] = this.filters.tab == this.tabs[1].name ? true : false //read/unread
+        if(this.filters.tab != this.tabs[0].value){   //all        
+          requestParams.params.filter['isRead'] = this.filters.tab == this.tabs[1].value ? true : false //read/unread
         }
 
         if(this.filters.date){
@@ -263,7 +263,7 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
         })
       },
       removeFromUnread(notification){
-        if(this.filters.tab == this.tabs[2].name){ //unread tab
+        if(this.filters.tab == this.tabs[2].value){ //unread tab
           this.notifications = this.notifications.filter((e) => {
             return e.id !== notification.id
           })
