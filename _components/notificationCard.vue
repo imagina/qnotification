@@ -1,20 +1,19 @@
 <template>
   <div>
-  <q-item clickable dense class="no-margin no-padding" @click="openModal()">
+  <q-item clickable dense class="q-my-sm q-px-none" @click="openModal()">
     <q-item-section avatar>
-      <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: iconColor }">
-        <q-icon :name="icon" :style="{color: iconColor, fontSize: '20px' }" />
+      <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: getIconColor }">
+        <q-icon :name="getIcon" :style="{color: getIconColor, fontSize: '20px' }" />
       </div>
-      <div v-else class="flex flex-center notification-notification-icon" :style="{borderColor: iconColor }">
-        <q-icon :name="icon" :style="{color: iconColor, fontSize: '32px' }" />
+      <div v-else class="flex flex-center notification-notification-icon" :style="{borderColor: getIconColor }">
+        <q-icon :name="getIcon" :style="{color: getIconColor, fontSize: '32px' }" />
       </div>
-    </q-item-section>                
-
+    </q-item-section>
     <q-item-section top>
       <q-item-label lines="1">
         <span class="text-weight-medium text-weight-bold">{{notification.title}}</span>                    
       </q-item-label>
-      <q-item-label lines="2">
+      <q-item-label lines="2" class="no-margin">
         <div class="text-body2" v-html="notification.message">
         </div>
       </q-item-label>
@@ -35,7 +34,7 @@
             rounded 
         />      
         <q-btn
-          v-if="isUnread"
+          v-if="isUnread && showMarkAsRead"
           class="notification-mark-as-read"
           rounded
           dense
@@ -66,8 +65,8 @@
         <!--notification-->
         <q-item class="no-margin no-padding">
           <q-item-section avatar top>
-            <div class="flex flex-center notification-notification-icon-big" :style="{borderColor: iconColor }">
-              <q-icon :name="icon" :style="{color: iconColor, fontSize: '48px' }" />
+            <div class="flex flex-center notification-notification-icon-big" :style="{borderColor: getIconColor }">
+              <q-icon :name="getIcon" :style="{color: getIconColor, fontSize: '48px' }" />
             </div>
           </q-item-section>                
 
@@ -91,7 +90,7 @@
       </q-card-section>
       <q-card-section v-if="imageUrl">
         <div 
-          class="notification-notification-image img-as-bg"
+          class="notification-notification-image"
           :style="`background-image: url('${imageUrl}')`">
         </div>        
       </q-card-section>
@@ -132,21 +131,16 @@
 </template>
 <script>
 //Components
-import baseService from '@imagina/qcrud/_services/baseService'
+import services from '@imagina/qnotification/services'
   export default {
     props: {
       notification: {},
-      icon: '', 
-      iconColor: '',
-      smallIcon: false
+      smallIcon: false, 
+      sourceSettings: [], 
+      showMarkAsRead: false
     },
     components: {},
     watch: {},
-    mounted() {
-      this.$nextTick(function () {        
-        this.init()
-      })
-    },
     data() {
       return {
         dialog: false, 
@@ -154,6 +148,13 @@ import baseService from '@imagina/qcrud/_services/baseService'
       }        
     },
     computed: {
+      getIcon(){
+        return this.sourceSettings[this.notification.source] ? this.sourceSettings[this.notification.source].icon : 'fa-light fa-bell'
+      },
+
+      getIconColor(){
+        return this.sourceSettings[this.notification.source] ? this.sourceSettings[this.notification.source].color : '#2196f3'
+      },
       isUnread(){
         return !this.notification.isRead
       },
@@ -170,8 +171,8 @@ import baseService from '@imagina/qcrud/_services/baseService'
       },
       markAsRead(){        
         this.notification.isRead = true
-        return new Promise((resolve, reject) => {        
-          baseService.update('apiRoutes.qnotification.markRead', this.notification.id, {}).then(response => {            
+        return new Promise((resolve, reject) => {
+          services.markAsRead(this.notification.id).then(response => {            
             resolve(this.notification)
           }).catch(error => {
             this.$apiResponse.handleError(error, () => {
@@ -186,19 +187,19 @@ import baseService from '@imagina/qcrud/_services/baseService'
       }, 
       openModal(){
         this.dialog = true;
-        if(this.notification.isRead == false){
-          this.notification.isRead = true          
-          this.markAsRead()
+        if(this.isUnread){
+          this.$emit('read')
+          this.markAsRead(this.notification.id)
         }
       }, 
       closeModal(){
         this.dialog = false
-        this.$emit('read')
       },
       markAsReadHandler(){
         this.loading = true
-        this.markAsRead().then(() => {
-          this.notification.isRead = true
+        this.notification.isRead = true
+        this.markAsRead(this.notification.id).then(() => {
+          console.log('marked as read')
           this.loading = false  
           this.$emit('read')
         })        
@@ -206,57 +207,6 @@ import baseService from '@imagina/qcrud/_services/baseService'
     },
   }
   </script>
-  <style lang="stylus">
-    
-    .notification-notification-icon-big {
-      border-radius: 8px;
-      width: 64px;
-      height: 64px;
-      border: 2px;
-      border-style: solid;
-    }
-  
-    .notification-notification-icon {
-      border-radius: 8px;
-      width: 48px;
-      height: 48px;
-      border: 2px;
-      border-style: solid;
-    }
-
-    .notification-notification-icon-small {
-      border-radius: 8px;
-      width: 36px;
-      height: 36px;
-      border: 2px;
-      border-style: solid;
-    }
-
-    .notification-notification-image {
-      height 250px;
-      width 100%;
-      border-radius 16px;
-    }
-
-    .notification-mark-as-read {
-      color: rgb(117, 117, 117);
-      border: 1px solid rgba(0, 13, 71, 0);
-    }
-
-    .notification-mark-as-read:hover {
-      color: rgba(0, 0, 0, 0.8);
-      border: 1px solid rgba(0, 13, 71, 0.15);
-    }
-
-    .notification-unread {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: column;
-      align-content: flex-end;
-      justify-content: space-between;
-      align-items: flex-end;
-      height: 100%;
-      padding-bottom: 4px
-    }
+  <style scoped src="../assets/styles/styles.css">
   </style>
   

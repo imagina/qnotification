@@ -22,7 +22,7 @@
             narrow-indicator
             style="align-items: center;"            
           >
-            <q-tab v-for="(tab, index) in tabs" :key="index" :name="tab.name"  :label="tab.label" />             
+            <q-tab v-for="(tab, index) in tabs" :key="index" :name="tab.value"  :label="tab.label" />             
           </q-tabs>
         </div>
         <!--filters-->
@@ -48,8 +48,8 @@
             <div v-for="(notification, index) in notifications" :key="index">
               <notification-card
                 :notification="notification"
-                :icon="getIcon(notification)"
-                :icon-color="getIconColor(notification)"
+                :show-mark-as-read="true"
+                :source-settings="sourceSettings"
                 @read="removeFromUnread(notification)"
               />
               <q-separator :spaced="'10px'"/>
@@ -83,7 +83,8 @@
   </template>
 <script>
 //Components
-import baseService from '@imagina/qcrud/_services/baseService'
+
+import services from '@imagina/qnotification/services'
 import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
 import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
   export default {
@@ -156,15 +157,15 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
         }, 
         tabs: [
           {
-            name: 'all', 
+            value: 'all',
             label: this.$tr('notification.cms.tab.all')
           }, 
           {
-            name: 'read', 
+            value: 'read', 
             label: this.$tr('notification.cms.tab.read')
           },
           {
-            name: 'unread', 
+            value: 'unread', 
             label: this.$tr('notification.cms.tab.unread')
           }
         ],
@@ -183,47 +184,24 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
       async init(){
         await this.getSources()
         await this.getNotifications()
-      },
-
-      getIcon(notification){
-        return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].icon : 'fa-light fa-bell'
-      },
-
-      getIconColor(notification){
-        return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].color : '#2196f3'
-      },
+      },      
 
       getSources(){
-        return new Promise((resolve, reject) => {
-          this.loading = true
-          //Request Params
-          let requestParams = {
-            refresh: true,
-            params: {filter: {allTranslations: true, configNameByModule: 'config.notificationSource'}}
-          }
-          //Request
-          baseService.index('apiRoutes.qsite.configs', requestParams).then(response => {
-            for (const [key, value] of Object.entries(response.data)) {
-              if(value != null){
-                this.sourceSettings = {...this.sourceSettings, ...response.data[key]}
-              }
-            }
-            //add source filter options
-            for (const [key, value] of Object.entries(this.sourceSettings)) {
-              this.formFields.source.props.options.push({label: this.sourceSettings[key]['label'], value: key})
-            }
-            if(this.formFields.source.props.options.length > 0){
-              this.formFields.source.props.vIf = true
-            }
-            this.loading = false
-            resolve(true)
-          }).catch(error => {
-            this.loading = false
-            this.$apiResponse.handleError(error, () => {
-              resolve(error)
-            })
-          })
+        this.loading = true
+        services.getSources().then( (sources) => {
+          this.sourceSettings = sources
+          this.addSourceFilterOptions()
         })
+      }, 
+
+      //add source filter options
+      addSourceFilterOptions(){
+        for (const [key, value] of Object.entries(this.sourceSettings)) {
+          this.formFields.source.props.options.push({label: this.sourceSettings[key]['label'], value: key})
+        }
+        if(this.formFields.source.props.options.length > 0){
+          this.formFields.source.props.vIf = true
+        }
       },
 
       async resetPagination(){
@@ -253,8 +231,8 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
           }
         }
         /* filters */
-        if(this.filters.tab != this.tabs[0].name){   //all        
-          requestParams.params.filter['isRead'] = this.filters.tab == this.tabs[1].name ? true : false //read/unread
+        if(this.filters.tab != this.tabs[0].value){   //all        
+          requestParams.params.filter['isRead'] = this.filters.tab == this.tabs[1].value ? true : false //read/unread
         }
 
         if(this.filters.date){
@@ -270,7 +248,7 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
         }
         
         return new Promise((resolve, reject) => {        
-          baseService.index('apiRoutes.qnotification.notifications', requestParams).then(response => {
+          services.getNotifications(requestParams).then(response => {
             this.loading = false
             this.pagination.lastPage = response.meta.page.lastPage
             this.pagination.total = response.meta.page.total
@@ -285,7 +263,7 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
         })
       },
       removeFromUnread(notification){
-        if(this.filters.tab == this.tabs[2].name){ //unread tab
+        if(this.filters.tab == this.tabs[2].value){ //unread tab
           this.notifications = this.notifications.filter((e) => {
             return e.id !== notification.id
           })
@@ -298,13 +276,6 @@ import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
     }
   }
   </script>
-  <style lang="stylus">
-    .notifications-notification-icon {
-      border-radius: 8px;
-      width: 40px;
-      height: 40px;
-      border: 2px;
-      border-style: solid;
-    }
+  <style>
   </style>
   

@@ -5,26 +5,9 @@
     :style="style"
     >
     <!-- ===== Header ===== -->
-    <div class="row justify-between items-center">
-      <div class="col-6">
+    <div class="row col justify-between items-center">      
         <label class="text-subtitle1">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
-      </div>
-      <div class="col-6">
-        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">
-          <!-- Go to notifications -->
-          <q-btn
-            unelevated
-            rounded
-            dense
-            @click="gotoNotifications()"
-          >
-            <q-icon
-                name="fa-light fa-arrow-up-right-from-square"
-                color="blue-grey"
-                size="20px" 
-                class="cursor-pointer"
-            />
-          </q-btn>
+        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">          
           <!-- Close icon -->
           <q-btn
             unelevated
@@ -40,34 +23,42 @@
             />
           </q-btn>
         </div>
-      </div>
+      
     </div>
     <!--Separator-->    
     <q-separator :spaced="'10px'"/>
-    <div class="tw-flex tw-justify-end q-my-md">
-      <mark-all-as-read
-        v-show="!loading"
-        @marked="() => {notifications = []; getData()}"
-      />
-    </div>    
     <!--Notifications-->    
       <!--Notifications List-->
       <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
         <notification-card
           :notification="notification"
-          :icon="getIcon(notification)"
-          :icon-color="getIconColor(notification)"
           :small-icon="true"
+          :source-settings="sourceSettings"
+          @read="markAsRead(notification)"
         />
-        <q-separator :spaced="'10px'" v-if="!lastItem(notification)"/>
+        <q-separator v-if="!lastItem(notification)"/>
       </div>
+      <!-- Go to notifications -->
+      <q-btn
+        unelevated
+        rounded
+        dense
+        outline
+        class="full-width q-mt-md"
+        no-caps
+        color="white"
+        text-color="black"
+        @click="gotoNotifications()"
+        label="Ver todas"
+        v-if="!loading"
+      />
       <!--Inner loading-->
       <inner-loading :visible="loading"/>    
   </div>
 </template>
 
 <script>
-import baseService from '@imagina/qcrud/_services/baseService'
+import services from '@imagina/qnotification/services'
 import notificationCard from '@imagina/qnotification/_components/notificationCard.vue'
 import markAllAsRead from '@imagina/qnotification/_components/markAllAsRead.vue'
 
@@ -101,7 +92,7 @@ export default {
   },
   computed: {
     style() {
-      return this.isMobile ? 'margin: 0px;width:320px' : 'margin: 50px 10px 0px 0px;width:420px'
+      return this.isMobile ? 'margin: 0px;' : 'margin: 50px 10px 0px 0px;'
     },
     //Items transformed
     notificationsData() {
@@ -196,7 +187,7 @@ export default {
           }
         }
         //get notifications
-        this.$crud.index('apiRoutes.qnotification.notifications', requestParams).then(response => {
+        services.getNotifications(requestParams).then(response => {
           this.notifications = [...this.notifications, ...response.data]
           this.pagination.lastPage = response.meta.page.lastPage
           this.pagination.page = response.meta.page.currentPage
@@ -216,56 +207,39 @@ export default {
       } 
     },
 
-    getIcon(notification){
-      return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].icon : 'fa-light fa-bell'
-    },
-
-    getIconColor(notification){
-      return this.sourceSettings[notification.source] ? this.sourceSettings[notification.source].color : '#2196f3'
-    },
-
     getSources(){
-      return new Promise((resolve, reject) => {
-        this.loading = true
-        //Request Params
-        let requestParams = {
-          refresh: true,
-          params: {filter: {allTranslations: true, configNameByModule: 'config.notificationSource'}}
-        }
-        //Request
-        baseService.index('apiRoutes.qsite.configs', requestParams).then(response => {
-          for (const [key, value] of Object.entries(response.data)) {
-            if(value != null){
-              this.sourceSettings = {...this.sourceSettings, ...response.data[key]}
-            }
-          }          
-          
-          this.loading = false
-          resolve(true)
-        }).catch(error => {
-          this.loading = false
-          this.$apiResponse.handleError(error, () => {
-            resolve(error)
-          })
-        })
+      this.loading = true
+      services.getSources().then( (sources) => {
+        this.sourceSettings = sources
       })
     }, 
     lastItem(notification){
       const last = this.notifications[this.notifications.length - 1]
       return last.id == notification.id
-    }  
+    }, 
+    markAsRead(notification){
+      this.notifications.find((e) => {
+        if(e.id == notification.id){
+          e.isRead = true
+        }
+      })
+    }
+
   }
 }
 </script>
-<style lang="stylus">
-#drawerNotificationsComponent
-  background-color: rgb(255, 255, 255);
-  border: 2px solid #e2e2e2;
-  border-radius: 8px;
-  height: auto;
-  padding 20px;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index 2000;
+<style scoped>
+  #drawerNotificationsComponent {
+    background-color: rgb(255, 255, 255);
+    border: 2px solid #e2e2e2;
+    border-radius: 8px;
+    min-height: 300px;
+    height: auto;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    z-index: 2000;
+  }
 </style>
