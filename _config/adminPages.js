@@ -17,7 +17,7 @@ export default {
   notification: {
     permission: 'notification.notifications.manage',
     activated: true,
-    path: '/notificaciones/panel',
+    path: '/notifications/panel',
     name: 'notification.admin.notification',
     crud: import('@imagina/qnotification/_crud/notifications'),
     layout: () => import('@imagina/qsite/_layouts/master'),
