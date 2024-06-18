@@ -1,13 +1,13 @@
 <template>
   <!--Content notifications-->
-  <div 
+  <div
     id="drawerNotificationsComponent"
     :style="style"
     >
     <!-- ===== Header ===== -->
-    <div class="row col justify-between items-center">      
-        <label class="text-subtitle1">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
-        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">          
+    <div class="row col justify-between items-center">
+        <label class="text-subtitle1 text-weight-bold">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
+        <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">
           <!-- Close icon -->
           <q-btn
             unelevated
@@ -15,19 +15,19 @@
             dense
             @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"
           >
-            <q-icon 
-              name="fa-light fa-times" 
-              color="blue-grey" 
-              size="20px" 
+            <q-icon
+              name="fa-light fa-times"
+              color="blue-grey"
+              size="20px"
               class="cursor-pointer"
             />
           </q-btn>
         </div>
-      
+
     </div>
-    <!--Separator-->    
+    <!--Separator-->
     <q-separator :spaced="'10px'"/>
-    <!--Notifications-->    
+    <!--Notifications-->
       <!--Notifications List-->
       <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
         <notification-card
@@ -53,7 +53,7 @@
         v-if="!loading"
       />
       <!--Inner loading-->
-      <inner-loading :visible="loading"/>    
+      <inner-loading :visible="loading"/>
   </div>
 </template>
 

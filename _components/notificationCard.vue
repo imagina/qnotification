@@ -1,6 +1,6 @@
 <template>
   <div>
-  <q-item clickable dense class="q-my-sm q-px-none" @click="openModal()">
+  <q-item clickable dense class="q-my-sm q-px-sm" @click="openModal()">
     <q-item-section avatar>
       <div v-if="smallIcon" class="flex flex-center notification-notification-icon-small" :style="{borderColor: getIconColor }">
         <q-icon :name="getIcon" :style="{color: getIconColor, fontSize: '20px' }" />
