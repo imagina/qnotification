@@ -75,6 +75,10 @@ export default class echo {
           if (response.frontEvent && response.frontEvent.name) {
             eventBus.emit(response.frontEvent.name, response.frontEvent)
           }
+          //Custom event to show important notification
+          if (response.options && response.options.isImportant) {
+            eventBus.emit('imagina.notification.open', response)
+          }
         })
     }
   }

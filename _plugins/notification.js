@@ -5,7 +5,7 @@ export default class NotificationPlugin {
   constructor(store) {
     this.echo = false //Default attribute to laravel echo
     this.doConnectionLaravelEcho(store)//Do connection with laravel echo
-    //this.requestNavigatorPermission()//Request navigator permission
+    this.requestNavigatorPermission()//Request navigator permission
   }
 
   //Connect to laravel echo

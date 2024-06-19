@@ -17,13 +17,13 @@ export default {
   notification: {
     permission: 'notification.notifications.manage',
     activated: true,
-    path: '/notificaciones/panel',
+    path: '/notifications/panel',
     name: 'notification.admin.notification',
     crud: import('modules/qnotification/_crud/notifications'),
     layout: () => import('layouts/master'),
     page: () => import('modules/qcrud/_pages/admin/crudPage'),
     title: 'notification.cms.sidebar.adminPanel',
-    icon: 'fa-light fa-panel-ews',
+    icon: 'fa-light fa-bell',
     authenticated: true,
     subHeader: {
       refresh: true,
