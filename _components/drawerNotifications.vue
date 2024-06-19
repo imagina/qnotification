@@ -30,7 +30,7 @@
     <!--Separator-->
     <q-separator/>
     <!--Content-->
-    <div class="full-width tw-pl-5 tw-pr-[30px] tw-pt-[15px]">
+    <div class="full-width tw-px-5 tw-pt-[15px]">
       <div class="flex justify-end" v-show="notificationsData.length && !loading && notificationUnread">
         <q-btn
           class="tw-text-sm tw-leading-[18px] tw-font-semibold"
@@ -45,50 +45,44 @@
       </div>
 
       <!--Notifications List-->
-      <q-list separator>
-        <template v-for="data in notificationsData.slice(0, 5)" :key="data.id">
-          <notification-card
-            :item-notification="data"
-            :source-settings="sourceSettings"
-            @open-modal="(val) => openModal(val)"
-          />
-        </template>
-      </q-list>
+      <q-virtual-scroll
+        class="max-height-scroll"
+        :items="notificationsData.slice(0, 5)"
+        separator
+        v-slot="{ item, index }"
+      >
+        <notification-card
+          :key="item.id"
+          :item-notification="item"
+          :source-settings="sourceSettings"
+          @open-modal="(val) => openModal(val)"
+        />
+      </q-virtual-scroll>
       <!--Inner loading-->
       <inner-loading :visible="loading"/>
-    </div>
 
-    <div v-if="notificationsData.length && !loading">
-      <!--Separator-->
-      <q-separator/>
-      <!-- Go to notifications -->
-      <q-btn
-        unelevated
-        dense
-        flat
-        class="full-width q-mt-xs"
-        color="primary"
-        @click="gotoNotifications()"
-        :label="$tr('notification.cms.seeAll')"
-      >
-        <q-icon
-          right
-          name="fa-regular fa-arrow-right "
-          size="18px"
-          class="cursor-pointer"
+      <div v-if="notificationsData.length && !loading">
+        <!-- Go to notifications -->
+        <q-btn
+          unelevated
+          dense
+          no-caps
+          class="full-width tw-mt-4 tw-mb-6 tw-rounded-lg"
+          color="grey-5"
+          text-color="grey-8"
+          @click="gotoNotifications()"
+          :label="$tr('notification.cms.seeAll', { capitalize: true })"
         />
-      </q-btn>
-
+      </div>
+      <div
+        v-else-if="!loading"
+        class="text-center tw-mt-4 tw-pl-5"
+      >
+        <label class="tw-text-gray-500">
+          {{ $tr('isite.cms.message.noMoreNotifications') }}
+        </label>
+      </div>
     </div>
-    <div
-      v-else-if="!loading"
-      class="text-center tw-mt-4 tw-pl-5"
-    >
-      <label class="tw-text-gray-500">
-        {{ $tr('isite.cms.message.noMoreNotifications') }}
-      </label>
-    </div>
-
 
     <!--- dialog --->
     <notification-dialog
@@ -310,7 +304,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 #drawerNotificationsComponent {
   background-color: rgb(255, 255, 255);
   border-radius: 15px;
@@ -323,5 +317,10 @@ export default {
   right: 0;
   width: 320px;
   z-index: 2000;
+
+  .max-height-scroll {
+    max-height: calc(100vh - 217px);
+    margin-top: 5px;
+  }
 }
 </style>
