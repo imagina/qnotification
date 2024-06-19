@@ -1,60 +1,49 @@
 <template>
-  <!--Content notifications-->
-  <div
-    id="drawerNotificationsComponent"
-    :style="style"
-    >
-    <!-- ===== Header ===== -->
-    <div class="row col justify-between items-center">
+  <q-dialog v-model="openDialog" posititon="right" transition-hide="slide-up" transition-show="slide-down"
+            @hide="$eventBus.$emit('toggleMasterDrawer', 'notification')">
+    <!--Content notifications-->
+    <div id="drawerNotificationsComponent" :style="style">
+      <!-- ===== Header ===== -->
+      <div class="row col justify-between items-center">
         <label class="text-subtitle1 text-weight-bold">{{ $tr('notification.cms.sidebar.adminGroup') }}</label>
         <div class="tw-flex tw-justify-end tw-content-center tw-gap-x-4">
           <!-- Close icon -->
-          <q-btn
-            unelevated
-            rounded
-            dense
-            @click="$eventBus.$emit('toggleMasterDrawer', 'notification')"
-          >
-            <q-icon
-              name="fa-light fa-times"
-              color="blue-grey"
-              size="20px"
-              class="cursor-pointer"
-            />
+          <q-btn unelevated rounded dense v-close-popup>
+            <q-icon name="fa-light fa-times" color="blue-grey" size="20px" class="cursor-pointer"/>
           </q-btn>
         </div>
 
-    </div>
-    <!--Separator-->
-    <q-separator :spaced="'10px'"/>
-    <!--Notifications-->
+      </div>
+      <!--Separator-->
+      <q-separator :spaced="'10px'"/>
       <!--Notifications List-->
       <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
         <notification-card
-          :notification="notification"
-          :small-icon="true"
-          :source-settings="sourceSettings"
-          @read="markAsRead(notification)"
+            :notification="notification"
+            :small-icon="true"
+            :source-settings="sourceSettings"
+            @read="markAsRead(notification)"
         />
         <q-separator v-if="!lastItem(notification)"/>
       </div>
       <!-- Go to notifications -->
       <q-btn
-        unelevated
-        rounded
-        dense
-        outline
-        class="full-width q-mt-md"
-        no-caps
-        color="white"
-        text-color="black"
-        @click="gotoNotifications()"
-        label="Ver todas"
-        v-if="!loading"
+          unelevated
+          rounded
+          dense
+          outline
+          class="full-width q-mt-md"
+          no-caps
+          color="white"
+          text-color="black"
+          @click="gotoNotifications()"
+          label="Ver todas"
+          v-if="!loading"
       />
       <!--Inner loading-->
       <inner-loading :visible="loading"/>
-  </div>
+    </div>
+  </q-dialog>
 </template>
 
 <script>
@@ -67,11 +56,17 @@ export default {
     this.$eventBus.$off('inotification.notifications.new')
   },
   props: {
-    isMobile: false
+    isMobile: false,
+    isOpen: false
   },
   components: {
-    notificationCard, 
+    notificationCard,
     markAllAsRead
+  },
+  watch: {
+    isOpen(newValue) {
+      this.openDialog = this.$clone(newValue)
+    }
   },
   mounted() {
     this.$nextTick(function () {
@@ -81,6 +76,7 @@ export default {
   data() {
     return {
       loading: false,
+      openDialog: false,
       notifications: [],
       pagination: {
         page: 1,
@@ -117,20 +113,6 @@ export default {
             isImportant: (notification.options && notification.options.isImportant) ? notification.options.isImportant : false,
           }
 
-          //Show alert important notification
-          if (!notification.isRead && notification.options && notification.options.isImportant) {
-            this.$alert.warning({
-              mode: 'modal',
-              message: notificationData.message,
-              icon: notificationData.icon,
-              actions: [{
-                label: this.$tr('isite.cms.label.ok'),
-                color: 'green',
-                handler: () => this.handlerActon(notificationData)
-              }],
-            })
-          }
-
           //Show badge header button
           if (!notification.isRead)
             this.$eventBus.$emit('header.badge.manage', {notification: true})
@@ -157,7 +139,7 @@ export default {
         this.notifications.unshift(response)
         //Show alert notification
         this.$alert.info({
-          message: `${response.message.substr(0, 30)}...`,
+          message: `${response.title.substr(0, 30)}...`,
           icon: 'fas fa-bell',
           actions: [{
             label: this.$tr('isite.cms.label.show'),
@@ -201,25 +183,25 @@ export default {
       })
     },
 
-    gotoNotifications(){
-      if(this.$route.name != 'notification.admin.notificationIndex'){
+    gotoNotifications() {
+      if (this.$route.name != 'notification.admin.notificationIndex') {
         this.$router.push({name: 'notification.admin.notificationIndex'})
-      } 
+      }
     },
 
-    getSources(){
+    getSources() {
       this.loading = true
-      services.getSources().then( (sources) => {
+      services.getSources().then((sources) => {
         this.sourceSettings = sources
       })
-    }, 
-    lastItem(notification){
+    },
+    lastItem(notification) {
       const last = this.notifications[this.notifications.length - 1]
       return last.id == notification.id
-    }, 
-    markAsRead(notification){
+    },
+    markAsRead(notification) {
       this.notifications.find((e) => {
-        if(e.id == notification.id){
+        if (e.id == notification.id) {
           e.isRead = true
         }
       })
@@ -229,17 +211,17 @@ export default {
 }
 </script>
 <style scoped>
-  #drawerNotificationsComponent {
-    background-color: rgb(255, 255, 255);
-    border: 2px solid #e2e2e2;
-    border-radius: 8px;
-    min-height: 300px;
-    height: auto;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 320px;
-    z-index: 2000;
-  }
+#drawerNotificationsComponent {
+  background-color: rgb(255, 255, 255);
+  border: 2px solid #e2e2e2;
+  border-radius: 8px;
+  min-height: 300px;
+  height: auto;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  z-index: 2000;
+}
 </style>

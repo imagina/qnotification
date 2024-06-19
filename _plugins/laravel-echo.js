@@ -2,6 +2,8 @@ import eventBus from '@imagina/qsite/_plugins/eventBus'
 import Echo from "laravel-echo"
 import Pusher from "pusher-js"
 import crud from '@imagina/qcrud/_services/baseService'
+import helper from '@imagina/qsite/_plugins/helper'
+import alert from '@imagina/qsite/_plugins/alert'
 
 export default class echo {
   constructor() {
@@ -73,6 +75,21 @@ export default class echo {
           //Custom event from backend
           if (response.frontEvent && response.frontEvent.name) {
             eventBus.$emit(response.frontEvent.name, response.frontEvent)
+          }
+          //Custom event to show important notification
+          if (response.options && response.options.isImportant) {
+            alert.warning({
+              mode: 'modal',
+              message: response.message,
+              icon: response.icon,
+              actions: [{
+                label: 'ok',
+                color: 'green',
+                handler: () => {
+                  if (response.link) helper.openExternalURL(response.link, true)
+                }
+              }],
+            })
           }
         })
       //Initialize the SW
