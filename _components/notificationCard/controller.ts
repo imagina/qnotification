@@ -1,5 +1,4 @@
-import {computed, reactive, ref, onMounted, toRefs, watch, getCurrentInstance} from "vue";
-import { i18n, helper } from 'src/plugins/utils';
+import {computed, reactive, onMounted, toRefs} from "vue";
 import apiResponse from 'src/modules/qcrud/_plugins/apiResponse'
 import services from 'src/modules/qnotification/services'
 
@@ -19,7 +18,13 @@ export default function controller(props: any, emit: any) {
   const computeds = {
     isUnread: computed(() =>{
       return !state.notification.isRead
-    })
+    }),
+    iconName: computed(() => {
+      return props.sourceSettings[props.itemNotification?.source] ? props.sourceSettings[props.itemNotification.source].icon : 'fa-light fa-bell';
+    }),
+    iconColor: computed(() => {
+      return props.sourceSettings[props.itemNotification?.source] ? props.sourceSettings[props.itemNotification.source].color : '#2196f3';
+    }),
   }
 
   // Methods
