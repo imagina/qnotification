@@ -32,12 +32,28 @@
     <!--Content-->
     <div class="full-width tw-pl-5 tw-pr-[30px] tw-pt-[15px]">
       <div class="flex justify-end" v-show="notificationsData.length && !loading && notificationUnread">
-        <dynamic-btn :btn-props="markProps"/>
+        <q-btn
+          class="tw-text-sm tw-leading-[18px] tw-font-semibold"
+          flat
+          dense
+          unelevated
+          no-caps
+          padding="none"
+          :label="$tr('notification.cms.markAllAsRead')"
+          @click="markAllAsRead()"
+        />
       </div>
 
       <!--Notifications List-->
-      <notification-manage :items="notificationsData.slice(0, 5)"/>
-
+      <q-list separator>
+        <template v-for="data in notificationsData.slice(0, 5)" :key="data.id">
+          <notification-card
+            :item-notification="data"
+            :source-settings="sourceSettings"
+            @open-modal="(val) => openModal(val)"
+          />
+        </template>
+      </q-list>
       <!--Inner loading-->
       <inner-loading :visible="loading"/>
     </div>
@@ -53,9 +69,15 @@
         class="full-width q-mt-xs"
         color="primary"
         @click="gotoNotifications()"
-        icon-right="fa-regular fa-arrow-right"
-        :label="$tr('notification.cms.seeAllNotifications')"
-      />
+        :label="$tr('notification.cms.seeAll')"
+      >
+        <q-icon
+          right
+          name="fa-regular fa-arrow-right "
+          size="18px"
+          class="cursor-pointer"
+        />
+      </q-btn>
 
     </div>
     <div
@@ -66,13 +88,20 @@
         {{ $tr('isite.cms.message.noMoreNotifications') }}
       </label>
     </div>
+
+
+    <!--- dialog --->
+    <notification-dialog
+      v-model="dialog"
+      :notification="selectedNotification"
+    />
   </div>
 </template>
 
 <script>
 import services from 'src/modules/qnotification/services'
-import notificationManage from 'src/modules/qnotification/_components/notificationManage/index.vue'
-import dynamicBtn from 'src/modules/qsite/_components/v3/dynamicBtn/index.vue'
+import notificationCard from 'src/modules/qnotification/_components/notificationCard/index.vue'
+import notificationDialog from 'src/modules/qnotification/_components/notificationDialog/index.vue'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
@@ -86,8 +115,8 @@ export default {
     isMobile: false
   },
   components: {
-    notificationManage,
-    dynamicBtn
+    notificationCard,
+    notificationDialog
   },
   mounted() {
     this.$nextTick(function () {
@@ -121,18 +150,8 @@ export default {
       },
       sourceSettings: null,
       eventBus,
-      markProps: {
-        props: {
-          class: "tw-text-sm tw-leading-[18px] tw-font-semibold",
-          flat: true,
-          dense: true,
-          unelevated: true,
-          noCaps: true,
-          padding: 'none',
-          label: this.$tr('notification.cms.markAllAsRead')
-        },
-        action: () => this.markAllAsRead()
-      }
+      dialog: false,
+      selectedNotification: null
     }
   },
   computed: {
@@ -276,26 +295,16 @@ export default {
       })
     },
     markAllAsRead(){
-      const updateMarkPropsLoading = (loading) => {
-        this.markProps = {
-          ...this.markProps,
-          props: {
-            ...this.markProps.props,
-            loading: loading
-          }
-        };
-      };
-
-      updateMarkPropsLoading(true);
-
       this.notifications = this.notifications.map((noti) => ({
         ...noti,
         isRead: true
       }))
 
-      services.markAllAsRead().then(() => {
-        updateMarkPropsLoading(false);
-      })
+      services.markAllAsRead()
+    },
+    openModal(notification) {
+      this.selectedNotification = notification;
+      this.dialog = true
     }
 
   }

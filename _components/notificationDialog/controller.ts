@@ -9,6 +9,7 @@ export default function controller(props: any, emit: any) {
 
   const computeds = {
     imageUrl: computed(() =>{
+      console.warn(props.notification?.mediaFiles?.mainimage?.mediumThumb)
       return props.notification?.mediaFiles?.mainimage?.id ? props.notification?.mediaFiles?.mainimage?.mediumThumb : false
     }),
     linkLabel: computed(() =>{
