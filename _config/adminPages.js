@@ -19,7 +19,7 @@ export default {
     activated: true,
     path: '/notifications/panel',
     name: 'notification.admin.notification',
-    //crud: import('module/qnotification/_crud/notifications'),
+    crud: import('modules/qnotification/_crud/notifications'),
     layout: () => import('layouts/master'),
     page: () => import('modules/qcrud/_pages/admin/crudPage'),
     title: 'notification.cms.sidebar.adminPanel',

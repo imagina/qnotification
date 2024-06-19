@@ -29,54 +29,50 @@
     </div>
     <!--Separator-->
     <q-separator/>
-    <!--Notifications-->
-    <q-scroll-area
-      :thumb-style="thumbStyle"
-      v-if="notificationsData.length"
-      class="scroll-area"
-    >
-      <!--Notifications List-->
-    <div v-for="notification in notificationsData.slice(0, 6)" :key="notification.id">
-      <notification-card
-        :notification="notification"
-        :small-icon="true"
-        :source-settings="sourceSettings"
-        @read="markAsRead(notification)"
-      />
-      <q-separator v-if="!lastItem(notification)"/>
-    </div>
-    <!-- Go to notifications -->
-    <q-btn
-      unelevated
-      rounded
-      dense
-      outline
-      class="full-width q-mt-md"
-      no-caps
-      color="white"
-      text-color="black"
-      @click="gotoNotifications()"
-      label="Ver todas"
-      v-if="!loading"
-        />
-      <div
-        v-else
-        class="text-center tw-mt-4"
-      >
-        <label class="tw-text-gray-500">
-          {{ $tr('isite.cms.message.noMoreNotifications') }}
-        </label>
+    <!--Content-->
+    <div class="full-width tw-pl-5 tw-pr-[30px] tw-pt-[15px]">
+      <div class="flex justify-end" v-show="notificationsData.length && !loading && notificationUnread">
+        <dynamic-btn :btn-props="markProps"/>
       </div>
+
+      <!--Notifications List-->
+      <notification-manage :items="notificationsData.slice(0, 5)"/>
+
       <!--Inner loading-->
       <inner-loading :visible="loading"/>
-    </q-scroll-area>
+    </div>
+
+    <div v-if="notificationsData.length && !loading">
+      <!--Separator-->
+      <q-separator/>
+      <!-- Go to notifications -->
+      <q-btn
+        unelevated
+        dense
+        flat
+        class="full-width q-mt-xs"
+        color="primary"
+        @click="gotoNotifications()"
+        icon-right="fa-regular fa-arrow-right"
+        :label="$tr('notification.cms.seeAllNotifications')"
+      />
+
+    </div>
+    <div
+      v-else-if="!loading"
+      class="text-center tw-mt-4 tw-pl-5"
+    >
+      <label class="tw-text-gray-500">
+        {{ $tr('isite.cms.message.noMoreNotifications') }}
+      </label>
+    </div>
   </div>
 </template>
 
 <script>
 import services from 'src/modules/qnotification/services'
-import notificationCard from 'src/modules/qnotification/_components/notificationCard/index.vue'
-import markAllAsRead from 'src/modules/qnotification/_components/markAllAsRead.vue'
+import notificationManage from 'src/modules/qnotification/_components/notificationManage/index.vue'
+import dynamicBtn from 'src/modules/qsite/_components/v3/dynamicBtn/index.vue'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
@@ -90,8 +86,8 @@ export default {
     isMobile: false
   },
   components: {
-    notificationCard,
-    markAllAsRead
+    notificationManage,
+    dynamicBtn
   },
   mounted() {
     this.$nextTick(function () {
@@ -120,11 +116,23 @@ export default {
       refScrollArea: null,
       pagination: {
         page: 1,
-        perPage: 15,
+        perPage: 5,
         lastPage: -1
       },
       sourceSettings: null,
-      eventBus
+      eventBus,
+      markProps: {
+        props: {
+          class: "tw-text-sm tw-leading-[18px] tw-font-semibold",
+          flat: true,
+          dense: true,
+          unelevated: true,
+          noCaps: true,
+          padding: 'none',
+          label: this.$tr('notification.cms.markAllAsRead')
+        },
+        action: () => this.markAllAsRead()
+      }
     }
   },
   computed: {
@@ -182,7 +190,10 @@ export default {
 
       //Response
       return response
-    }
+    },
+    notificationUnread() {
+      return !!this.notificationsData.filter(item => !item.isRead)?.length
+    },
   },
   methods: {
     async init() {
@@ -263,6 +274,28 @@ export default {
           e.isRead = true
         }
       })
+    },
+    markAllAsRead(){
+      const updateMarkPropsLoading = (loading) => {
+        this.markProps = {
+          ...this.markProps,
+          props: {
+            ...this.markProps.props,
+            loading: loading
+          }
+        };
+      };
+
+      updateMarkPropsLoading(true);
+
+      this.notifications = this.notifications.map((noti) => ({
+        ...noti,
+        isRead: true
+      }))
+
+      services.markAllAsRead().then(() => {
+        updateMarkPropsLoading(false);
+      })
     }
 
   }
@@ -271,8 +304,9 @@ export default {
 <style scoped>
 #drawerNotificationsComponent {
   background-color: rgb(255, 255, 255);
-  border: 2px solid #e2e2e2;
-  border-radius: 8px;
+  border-radius: 15px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.06), 0px 5px 20px rgba(0, 0, 0, 0.04), 0px 2px 6px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(20px);
   min-height: 300px;
   height: auto;
   position: fixed;
