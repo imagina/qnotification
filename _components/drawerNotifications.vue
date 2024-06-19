@@ -1,5 +1,6 @@
 <template>
   <q-dialog v-model="openDialog" posititon="right" transition-hide="slide-up" transition-show="slide-down"
+            @show="getData"
             @hide="eventBus.emit('toggleMasterDrawer', 'notification')">
     <!--Content notifications-->
     <div
@@ -21,7 +22,7 @@
       <q-separator />
       <!--Content-->
       <div class="full-width tw-px-5 tw-pt-[15px]">
-        <div class="flex justify-end" v-show="notificationsData.length && !loading && notificationUnread">
+        <div class="flex justify-end" v-show="notificationsData.length && !loading">
           <q-btn
             class="tw-text-sm tw-leading-[18px] tw-font-semibold"
             flat
@@ -60,13 +61,6 @@
           </label>
         </div>
       </div>
-
-      <!--- dialog --->
-      <notification-dialog
-        v-model="dialog"
-        :notification="selectedNotification"
-        :source-settings="sourceSettings"
-      />
     </div>
   </q-dialog>
 </template>
@@ -74,7 +68,6 @@
 <script>
 import services from 'src/modules/qnotification/services';
 import notificationCard from 'src/modules/qnotification/_components/notificationCard/index.vue';
-import notificationDialog from 'src/modules/qnotification/_components/notificationDialog/index.vue';
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts';
 
@@ -90,8 +83,7 @@ export default {
     isOpen: false
   },
   components: {
-    notificationCard,
-    notificationDialog
+    notificationCard
   },
   mounted() {
     this.$nextTick(function() {
@@ -128,9 +120,7 @@ export default {
         lastPage: -1
       },
       sourceSettings: null,
-      eventBus,
-      dialog: false,
-      selectedNotification: null
+      eventBus
     };
   },
   computed: {
@@ -174,9 +164,6 @@ export default {
 
       //Response
       return response;
-    },
-    notificationUnread() {
-      return !!this.notificationsData.filter(item => !item.isRead)?.length;
     }
   },
   methods: {
@@ -184,7 +171,6 @@ export default {
       storeFirebase.addEvent();
       this.listenEvents();
       await this.getSources();
-      this.getData();
       storeFirebase.icon = this.$store.state.qsiteApp.logo;
     },
     //Listen events
@@ -268,8 +254,7 @@ export default {
       services.markAllAsRead();
     },
     openModal(notification) {
-      this.selectedNotification = notification;
-      this.dialog = true;
+      eventBus.emit('imagina.notification.open', notification)
     }
 
   }
@@ -286,7 +271,8 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  width: 320px;
+  max-width: 430px;
+  width: 100%;
   z-index: 2000;
 
   .max-height-scroll {

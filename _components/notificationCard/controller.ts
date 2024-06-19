@@ -1,4 +1,4 @@
-import {computed, reactive, onMounted, toRefs} from "vue";
+import {computed, reactive, onMounted, toRefs, watch} from "vue";
 import apiResponse from 'src/modules/qcrud/_plugins/apiResponse'
 import services from 'src/modules/qnotification/services'
 
@@ -31,6 +31,7 @@ export default function controller(props: any, emit: any) {
   const methods = {
       markAsRead(){
         state.notification.isRead = true
+        emit('read')
         return new Promise((resolve, reject) => {
           services.markAsRead(state.notification.id).then(response => {
             resolve(state.notification)
@@ -52,13 +53,16 @@ export default function controller(props: any, emit: any) {
         state.loading = true
         methods.markAsRead().then(() => {
           state.loading = false
-          emit('read')
         })
       }
   }
 
   // Mounted
   onMounted(() => {
+  })
+
+  watch(() => props.itemNotification, (newValue) => {
+    state.notification = newValue;
   })
 
   return {...refs, ...(toRefs(state)), ...computeds, ...methods}

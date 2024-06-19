@@ -33,9 +33,18 @@
 
           <div class="col-xs-6 col-md-3">
             <div class="tw-text-center">
-              <mark-all-as-read
-                @marked="resetPagination()"
-              />
+              <div class="flex justify-end">
+                <q-btn
+                  class="tw-text-sm tw-leading-[18px] tw-font-semibold"
+                  flat
+                  dense
+                  unelevated
+                  no-caps
+                  padding="none"
+                  :label="$tr('notification.cms.markAllAsRead')"
+                  @click="markAllAsRead()"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -47,10 +56,11 @@
         <div style="min-height: 100px">
           <div v-for="(notification, index) in notifications" :key="index">
             <notification-card
-              :notification="notification"
+              :item-notification="notification"
               :show-mark-as-read="true"
-              :source-settings="sourceSettings"
+              :source-settings="sourceSettings || {}"
               @read="removeFromUnread(notification)"
+              @open-modal="(val) => openModal(val)"
             />
             <q-separator :spaced="'10px'"/>
           </div>
@@ -86,12 +96,12 @@
 
 import services from 'src/modules/qnotification/services'
 import notificationCard from 'src/modules/qnotification/_components/notificationCard/index.vue'
-import markAllAsRead from 'src/modules/qnotification/_components/markAllAsRead.vue'
+import { eventBus } from '../../../../plugins/utils';
+
 export default {
   props: {},
   components: {
-    notificationCard,
-    markAllAsRead
+    notificationCard
   },
   watch: {
     'pagination.currentPage' : {
@@ -272,7 +282,15 @@ export default {
       if(this.notifications.length == 0){
         this.getNotifications()
       }
-    }
+    },
+    markAllAsRead() {
+      services.markAllAsRead().then(() => {
+        this.resetPagination()
+      });
+    },
+    openModal(notification) {
+      eventBus.emit('imagina.notification.open', notification)
+    },
   }
 }
 </script>

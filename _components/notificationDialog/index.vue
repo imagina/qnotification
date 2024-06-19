@@ -11,14 +11,14 @@
           <q-icon name="fa-light fa-times" color="grey-7" size="20px" class="cursor-pointer" @click="closeModal()" />
         </div>
       </q-card-section>
-      <div class="container-section-dialog">
+      <div class="container-section-dialog q-pb-md">
         <div class="scrollable-section-dialog">
           <q-card-section class="tw-p-6 tw-pt-0">
             <!--notification-->
             <q-item class="no-margin no-padding">
               <q-item-section avatar top>
-                <div class="flex flex-center tw-w-[70px] tw-h-[70px] tw-bg-[#D9D9D9] tw-rounded-lg notification-notification-icon-big">
-                  <q-icon :name="icon" :style="{color: iconColor, fontSize: '48px' }" />
+                <div :class="`flex flex-center tw-w-[70px] tw-h-[70px] tw-bg-[${sourceData.backgroundColor}] tw-rounded-lg notification-notification-icon-big`">
+                  <q-icon :name="sourceData.icon" :style="{color: sourceData.color, fontSize: '48px' }" />
                 </div>
               </q-item-section>
 
@@ -45,23 +45,24 @@
           </q-card-section>
         </div>
       </div>
-      <q-card-actions align="right" v-if="notification.link" class="q-pa-md">
+      <q-card-actions align="right" v-if="notification.link" class="q-px-md q-pb-md">
         <q-btn
           :label="$tr('notification.cms.cancel')"
           rounded
           no-caps
           unelevated
-          color="grey"
+          color="grey-5"
+          text-color="grey-8"
           @click="closeModal()"
-          class="q-px-sm"
+          class="q-px-md tw-w-[90px]"
         />
         <q-btn
           rounded
           no-caps
           unelevated
-          color="green"
+          color="green-5"
           @click="goToLink()"
-          class="q-px-sm"
+          class="q-px-md tw-w-[124px]"
         >
         <span>
           {{ linkLabel }}
@@ -84,8 +85,7 @@ import controller from 'src/modules/qnotification/_components/notificationDialog
 export default defineComponent({
   props: {
     notification: { default: {} },
-    icon: { default: '' },
-    iconColor: { default: '' }
+    sourceSettings: { default: [] }
   },
   components: {},
   setup(props, { emit }) {

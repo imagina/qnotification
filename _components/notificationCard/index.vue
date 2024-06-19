@@ -64,4 +64,14 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
+.notification-unread {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 100%;
+  padding-bottom: 4px
+}
 </style>
