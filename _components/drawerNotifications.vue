@@ -47,7 +47,7 @@
         <div v-if="notificationsData.length && !loading">
           <!-- Go to notifications -->
           <q-btn unelevated dense no-caps class="full-width tw-mt-4 tw-mb-6 tw-rounded-lg"
-            color="grey-5" text-color="grey-8" @click="gotoNotifications()"
+            color="grey-3" text-color="grey-8" @click="gotoNotifications()"
             :label="$tr('notification.cms.seeAll', { capitalize: true })"
           />
         </div>
@@ -269,7 +269,7 @@ export default {
   border-radius: 15px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.06), 0px 5px 20px rgba(0, 0, 0, 0.04), 0px 2px 6px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(20px);
-  min-height: 300px;
+  min-height: 150px;
   height: auto;
   position: fixed;
   top: 0;
