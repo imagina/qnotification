@@ -1,7 +1,6 @@
 <template>
   <q-dialog v-model="openDialog" posititon="right" transition-hide="slide-up" transition-show="slide-down"
-            @show="getData"
-            @hide="eventBus.emit('toggleMasterDrawer', 'notification')">
+            @show="getData" @hide="hideModal">
     <!--Content notifications-->
     <div
       id="drawerNotificationsComponent"
@@ -255,6 +254,10 @@ export default {
     },
     openModal(notification) {
       eventBus.emit('imagina.notification.open', notification)
+    },
+    hideModal() {
+      this.notifications = []
+      eventBus.emit('toggleMasterDrawer', 'notification')
     }
 
   }
