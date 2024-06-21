@@ -35,7 +35,7 @@ export default function controller(_: any, emit: any) {
       });
     },
     goToLink(){
-      helper.openExternalURL(state.notification.link, true)//open expernal URL
+      helper.openExternalURL(state.notification?.url || state.notification.link, true)//open expernal URL
     },
     closeModal(){
       state.dialog = false
