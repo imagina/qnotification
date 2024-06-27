@@ -19,12 +19,15 @@ export default function controller(props: any, emit: any) {
     isUnread: computed(() =>{
       return !state.notification.isRead
     }),
-    iconName: computed(() => {
-      return props.sourceSettings[props.itemNotification?.source] ? props.sourceSettings[props.itemNotification.source].icon : 'fa-light fa-bell';
-    }),
-    iconColor: computed(() => {
-      return props.sourceSettings[props.itemNotification?.source] ? props.sourceSettings[props.itemNotification.source].color : '#2196f3';
-    }),
+    sourceData: computed(() => {
+      const sourceData = props.sourceSettings[props.itemNotification?.source] || {}
+      return {
+        backgroundColor: "#D9D9D9",
+        color: "#2196f3",
+        icon: "fa-light fa-bell",
+        ...(sourceData)
+      };
+    })
   }
 
   // Methods

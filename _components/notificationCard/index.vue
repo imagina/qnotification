@@ -1,8 +1,8 @@
 <template>
   <q-item clickable dense class="q-pt-sm q-my-sm q-px-sm" @click="openModal()">
       <q-item-section avatar top>
-        <div class="flex flex-center notification-notification-icon-small tw-w-12 tw-h-12 tw-bg-gray-100 tw-rounded-lg">
-          <q-icon :name="iconName" :style="{color: iconColor, fontSize: '20px'}" />
+        <div class="flex flex-center notification-notification-icon-small tw-w-12 tw-h-12 tw-rounded-lg" :style="{ backgroundColor: sourceData.backgroundColor }">
+          <q-icon :name="sourceData.icon" :style="{color: sourceData.color, fontSize: '20px'}" />
         </div>
       </q-item-section>
       <q-item-section top>

@@ -19,7 +19,7 @@ export default function controller(_: any, emit: any) {
       return {
         backgroundColor: "#D9D9D9",
         color: "#2196f3",
-        icon: "fa-light fa-home",
+        icon: "fa-light fa-bell",
         ...(state.notification?.sourceData || {})
       };
     })

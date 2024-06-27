@@ -5,7 +5,8 @@
         <div class="row justify-between items-center">
           <div class="text-subtitle1 row items-center ">
             <q-icon name="fa-solid fa-bell" color="grey-9" size="22px" class="q-mr-sm" />
-            <label class="text-grey-9 text-weight-bold">{{ $tr('isite.cms.label.notification', { capitalize: true }) }}</label>
+            <label class="text-grey-9 text-weight-bold">{{ $tr('isite.cms.label.notification', { capitalize: true })
+              }}</label>
           </div>
           <!-- Close icon -->
           <q-icon name="fa-light fa-times" color="grey-7" size="20px" class="cursor-pointer" @click="closeModal()" />
@@ -17,7 +18,8 @@
             <!--notification-->
             <q-item class="no-margin no-padding">
               <q-item-section avatar top>
-                <div :class="`flex flex-center tw-w-[70px] tw-h-[70px] tw-bg-[${sourceData.backgroundColor}] tw-rounded-lg notification-notification-icon-big`">
+                <div class="flex flex-center tw-w-[70px] tw-h-[70px] tw-rounded-lg notification-notification-icon-big"
+                     :style="{ backgroundColor: sourceData.backgroundColor }">
                   <q-icon :name="sourceData.icon" :style="{color: sourceData.color, fontSize: '48px' }" />
                 </div>
               </q-item-section>
@@ -51,7 +53,7 @@
           rounded
           no-caps
           unelevated
-          color="grey-5"
+          color="grey-3"
           text-color="grey-8"
           @click="closeModal()"
           class="q-px-md tw-w-[90px]"
