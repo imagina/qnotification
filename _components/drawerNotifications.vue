@@ -51,14 +51,8 @@
             :label="$tr('notification.cms.seeAll', { capitalize: true })"
           />
         </div>
-        <div
-          v-else-if="!loading"
-          class="text-center tw-mt-4 tw-pl-5"
-        >
-          <label class="tw-text-gray-500">
-            {{ $tr('isite.cms.message.noMoreNotifications') }}
-          </label>
-        </div>
+        <!--Empty Result-->
+        <not-result v-else-if="!loading" class="tw-mt-4 tw-pl-5" />
       </div>
     </div>
   </q-dialog>
