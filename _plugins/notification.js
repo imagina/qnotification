@@ -19,9 +19,7 @@ export default class NotificationPlugin {
 
   //Request Navigator permission
   requestNavigatorPermission() {
-    if (process.env.CLIENT) {
-      window.Notification.requestPermission()
-    }
+    if ('Notification' in window) window.Notification.requestPermission();
   }
 
   //Push notification to navigator
