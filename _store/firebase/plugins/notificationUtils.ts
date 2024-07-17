@@ -1,8 +1,8 @@
 import moment from 'moment';
 import store from 'modules/qnotification/_store/firebase';
-import { computed, ComputedRef } from 'vue';
-import { MessagePayload } from "firebase/messaging";
-import { uid } from 'src/plugins/utils'
+import {computed, ComputedRef} from 'vue';
+import {MessagePayload} from "firebase/messaging";
+import {uid} from 'src/plugins/utils'
 
 /**
  * Displays a notification on the user interface and sends a push notification.
@@ -13,40 +13,38 @@ import { uid } from 'src/plugins/utils'
  * @param {string} payload.notification.body - Body of the notification.
  */
 export function notificationFirebase(payload: MessagePayload): void {
-    const title = payload.notification!.title!;
-    const notificationOptions: any = {
-        body: payload.notification!.body,
-        icon: payload.notification!.icon,
-    };
+  const title = payload.notification!.title!;
+  const notificationOptions: any = {
+    body: payload.notification!.body,
+    icon: payload.notification!.icon,
+  };
 
-    const notification = {
-        id: notificationOptions.id || uid(),
-        message: `<b>${title}</b> ${notificationOptions.body}`,
-        icon: notificationOptions.icon || 'fas fa-bell',
-        createdAt: notificationOptions.createdAt || moment(),
-        isRead: notificationOptions.isRead || false,
-        link: notificationOptions.link || false,
-        isImportant: (notificationOptions.options && notificationOptions.options.isImportant)
-            ? notificationOptions.options.isImportant : false,
-    };
+  const notification = {
+    id: notificationOptions.id || uid(),
+    message: `<b>${title}</b> ${notificationOptions.body}`,
+    icon: notificationOptions.icon || 'fas fa-bell',
+    createdAt: notificationOptions.createdAt || moment(),
+    isRead: notificationOptions.isRead || false,
+    link: notificationOptions.link || false,
+    isImportant: (notificationOptions.options && notificationOptions.options.isImportant)
+      ? notificationOptions.options.isImportant : false,
+  };
 
-    store.notification = notification;
+  store.notification = notification;
 
-    if ('Notification' in window) {
-        Notification.requestPermission().then((permission) => {
-            if (permission === 'granted') {
-                const options = {
-                    body: notificationOptions.body,
-                    icon: store.icon,
-                };
-                navigator.serviceWorker.ready.then(registration => {
-                    if (registration) {
-                        registration.showNotification(title, options);
-                    }
-                });
-            }
-        });
+  if ('Notification' in window) {
+    if (Notification.permission === "granted") {
+      const options = {
+        body: notificationOptions.body,
+        icon: store.icon,
+      };
+      navigator.serviceWorker.ready.then(registration => {
+        if (registration) {
+          registration.showNotification(title, options);
+        }
+      });
     }
+  }
 }
 
 /**
@@ -55,8 +53,8 @@ export function notificationFirebase(payload: MessagePayload): void {
  * @param {object} event - Event containing the data of the received background message.
  */
 export function onBackgroundMessage(event: any): void {
-    const payload = event.data;
-    notificationFirebase(payload);
+  const payload = event.data;
+  notificationFirebase(payload);
 }
 
 /**
@@ -65,19 +63,19 @@ export function onBackgroundMessage(event: any): void {
  * @returns {string} - Detected device type: "iPhone", "Android", "Mac", "Windows", or "Unknown".
  */
 export function detectDevice(): string {
-    const userAgent = navigator.userAgent.toLowerCase();
+  const userAgent = navigator.userAgent.toLowerCase();
 
-    if (/iphone|ipad|ipod/.test(userAgent)) {
-        return "iPhone";
-    } else if (/android/.test(userAgent)) {
-        return "Android";
-    } else if (/macintosh|mac os x/.test(userAgent)) {
-        return "Mac";
-    } else if (/windows/.test(userAgent)) {
-        return "Windows";
-    } else {
-        return "Unknown";
-    }
+  if (/iphone|ipad|ipod/.test(userAgent)) {
+    return "iPhone";
+  } else if (/android/.test(userAgent)) {
+    return "Android";
+  } else if (/macintosh|mac os x/.test(userAgent)) {
+    return "Mac";
+  } else if (/windows/.test(userAgent)) {
+    return "Windows";
+  } else {
+    return "Unknown";
+  }
 }
 
 /**
@@ -86,20 +84,20 @@ export function detectDevice(): string {
  * @returns {ComputedRef<boolean | Promise<boolean>>} - `true` if push notifications are enabled; `false` otherwise.
  */
 export const checkPushNotifications: ComputedRef<boolean | Promise<boolean>> = computed(() => {
-    // Check if the browser supports notifications
-    if ("Notification" in window) {
-        // Check if notifications are allowed
-        if (Notification.permission === "granted") {
-            return true; // Push notifications are active
-        } else if (Notification.permission === "denied") {
-            return false; // Push notifications are blocked
-        } else {
-            // Notifications are neither granted nor blocked, so we will request permission from the user.
-            return Notification.requestPermission().then(function (permission) {
-                return permission === "granted"; // Return true if user grants permission, false otherwise
-            });
-        }
+  // Check if the browser supports notifications
+  if ("Notification" in window) {
+    // Check if notifications are allowed
+    if (Notification.permission === "granted") {
+      return true; // Push notifications are active
+    } else if (Notification.permission === "denied") {
+      return false; // Push notifications are blocked
     } else {
-        return false; // The browser does not support push notifications
+      // Notifications are neither granted nor blocked, so we will request permission from the user.
+      return Notification.requestPermission().then(function (permission) {
+        return permission === "granted"; // Return true if user grants permission, false otherwise
+      });
     }
+  } else {
+    return false; // The browser does not support push notifications
+  }
 });
