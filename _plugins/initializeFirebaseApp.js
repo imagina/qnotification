@@ -6,7 +6,7 @@ import CryptoJS from 'crypto-js';
 export const initFirebaseApp = async () => {
     try {
         const currentDate = moment().format('YYYY-MM-DD');
-        const md5Hash = CryptoJS.MD5(`https://one.allianceground.com${currentDate}firebase`).toString();
+        const md5Hash = CryptoJS.MD5(`${window.location.host}${currentDate}firebase`).toString();
         const response = await axios.get(`https://staging-siembra-coffe.ozonohosting.com/api/notification/v1/providers/firebase?filter={%22field%22:%20%22system_name%22}&token=${md5Hash}`)
         const json = response.data;
         if (json.errors === 'Unauthorized') {
@@ -24,7 +24,7 @@ export const initFirebaseApp = async () => {
         }
 
         const app = initializeApp(firebaseConfig);
-        
+
         return { app, firebaseWebPushCertificateKeyPair: json.data.fields.firebaseWebPushCertificateKeyPair }
     } catch (err) {
         console.log('Error initializing Firebase', err);
