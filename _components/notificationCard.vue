@@ -190,7 +190,7 @@ export default {
       });
     },
     goToLink() {
-      this.$helper.openExternalURL(this.notification.link, true);//open expernal URL
+      this.$helper.openExternalURL(this.notification.link, false);//open expernal URL
     },
     openModal() {
       this.dialog = true;
