@@ -190,7 +190,8 @@ export default {
       });
     },
     goToLink() {
-      this.$helper.openExternalURL(this.notification.link, false);//open expernal URL
+      if(this.notification.vueRoute) this.$router.push({name: this.notification.vueRoute})
+      else this.$helper.openExternalURL(this.notification.link, false);//open expernal URL
     },
     openModal() {
       this.dialog = true;
