@@ -70,8 +70,11 @@ export default class echo {
       //Open channel
       this.echo.channel(channelName)
         .listen(`.${eventName}`, (response) => {
+          const showInBell = response.setting && response.setting.saveInDatabase
           //Bell notification
-          if (!response.isAction) response.frontEvent = {...response, name: 'inotification.notifications.new'}
+          if (showInBell){
+            eventBus.$emit('inotification.notifications.new', response)
+          }
           //Custom event from backend
           if (response.frontEvent && response.frontEvent.name) {
             eventBus.$emit(response.frontEvent.name, response.frontEvent)
