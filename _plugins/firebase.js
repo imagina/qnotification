@@ -1,5 +1,5 @@
 import { getMessaging, getToken } from "firebase/messaging";
-import { initFirebaseApp } from './initializeFirebaseApp'
+//import { initFirebaseApp } from './initializeFirebaseApp'
 
 import storeFirebase from 'modules/qnotification/_store/firebase/index.ts'
 
@@ -9,9 +9,9 @@ export async function getTokenFirebase(userId) {
     const registrations = await navigator.serviceWorker.getRegistrations();
     if(registrations.length === 0) return;
   }
-   const { app, firebaseWebPushCertificateKeyPair } = await initFirebaseApp();
-   if(!firebaseWebPushCertificateKeyPair) return;
-   notificationToken(app, firebaseWebPushCertificateKeyPair, userId);
+   //const { app, firebaseWebPushCertificateKeyPair } = await initFirebaseApp();
+   //if(!firebaseWebPushCertificateKeyPair) return;
+   //notificationToken(app, firebaseWebPushCertificateKeyPair, userId);
 }
 
 
