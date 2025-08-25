@@ -135,7 +135,7 @@ export default {
             props: {
               label: this.$tr('isite.cms.form.image'),
               zone: 'mainimage',
-              entity: "Modules\\Notification\\Entities\\Notification",
+              entity: "Modules\\Notification\\Models\\Notification",
               entityId: null
             }
           }
